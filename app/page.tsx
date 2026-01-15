@@ -142,7 +142,6 @@ export default function HomePage() {
 
   return (
     <>
-      <Header />
       <main>
         <HeroSection />
         <ProductCategories />
@@ -150,7 +149,6 @@ export default function HomePage() {
         <TopSelling products={topSellingProducts} loading={loading} />
         <CustomerReviews reviews={customerReviews} loading={loading} />
       </main>
-      <Footer />
     </>
   )
 }
