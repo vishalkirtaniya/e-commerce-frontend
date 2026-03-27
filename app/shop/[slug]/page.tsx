@@ -1,8 +1,7 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import ProductDetailPage from "./ui/DetailsPage";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+import { API_URL } from "@/lib/api";
 
 // ── Types matching backend response ──────────────────────────
 interface ApiSize {

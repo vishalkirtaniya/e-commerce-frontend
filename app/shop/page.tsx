@@ -4,8 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import FiltersSidebar from "@/components/FiltersSidebar";
 import ProductGrid from "@/components/ProductGrid";
 import BreadCrumb from "@/components/ui/BreadCrumb";
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+import { API_URL } from "@/lib/api";
 
 // ── Types ─────────────────────────────────────────────────────
 export interface FilterOptions {

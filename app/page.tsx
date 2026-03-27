@@ -7,9 +7,7 @@ import ProductCategories from "@/components/ProductCategories";
 import NewArrivals from "@/components/NewArrivals";
 import TopSelling from "@/components/TopSelling";
 import CustomerReviews from "@/components/CustomerReviews";
-
-// ── Base URL — set NEXT_PUBLIC_API_URL in your .env.local ─────
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3500";
+import { API_URL } from "@/lib/api"; 
 
 // ── Types matching backend response shapes ─────────────────────
 interface ApiProduct {

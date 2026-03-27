@@ -1,31 +1,31 @@
-'use client';
-import Image from'next/image';
- import Button from'@/components/ui/Button';
- import RatingBar from'@/components/ui/RatingBar';
+"use client";
+import Image from "next/image";
+import Button from "@/components/ui/Button";
+import RatingBar from "@/components/ui/RatingBar";
 
 interface Product {
-  id: number
-  name: string
-  price: string
-  originalPrice?: string
-  discount?: string
-  rating: number
-  image: string
+  id: number;
+  name: string;
+  price: string;
+  originalPrice?: string;
+  discount?: string;
+  rating: number;
+  image: string;
 }
 
 interface NewArrivalsProps {
-  products: Product[]
-  loading: boolean
+  products: Product[];
+  loading: boolean;
 }
 
 const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
   const handleViewAll = (): void => {
     // Navigate to all products page
-  }
+  };
 
   const handleProductClick = (productId: number): void => {
     // Navigate to product detail page
-  }
+  };
 
   return (
     <section className="w-full bg-secondary-background mt-[96px] px-4 sm:px-6 lg:px-8">
@@ -53,7 +53,7 @@ const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[20px] w-full">
               {products.map((product) => (
-                <div 
+                <div
                   key={product.id}
                   className="flex flex-col gap-[16px] cursor-pointer group"
                   onClick={() => handleProductClick(product.id)}
@@ -127,7 +127,7 @@ const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
             fill_background_color="bg-transparent"
             border_border="border border-border-primary"
             border_border_radius="rounded-[26px]"
-            className='px-5 py-1'
+            className="px-5 py-1"
             onClick={handleViewAll}
           />
         </div>
