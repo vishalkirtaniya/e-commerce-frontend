@@ -1,39 +1,38 @@
-'use client';
-import Image from'next/image';
+"use client";
+import Image from "next/image";
 
 const ProductCategories = () => {
   const categories = [
     {
       id: 1,
-      name: 'Casual',
-      image: '/images/casual.png',
-      className: 'w-full sm:w-[36%]'
+      name: "Casual",
+      image: "/images/casual.png",
+      className: "w-full sm:w-[36%]",
     },
     {
       id: 2,
-      name: 'Formal',
-      image: '/images/formal.png',
-      className: 'w-full sm:w-[calc(64%-10px)]'
+      name: "Formal",
+      image: "/images/formal.png",
+      className: "w-full sm:w-[calc(64%-10px)]",
     },
     {
       id: 3,
-      name: 'Party',
-      image: '/images/party.png',
-      className: 'w-full sm:w-[calc(64%-10px)]'
+      name: "Party",
+      image: "/images/party.png",
+      className: "w-full sm:w-[calc(64%-10px)]",
     },
     {
       id: 4,
-      name: 'Gym',
-      image: '/images/gym.png',
-      className: 'w-full sm:w-[36%]'
-    }
-  ]
+      name: "Gym",
+      image: "/images/gym.png",
+      className: "w-full sm:w-[36%]",
+    },
+  ];
 
   return (
     <section className="w-full bg-secondary-background mt-[96px] px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-[1240px] mx-auto bg-[#f0f0f0] rounded-[20px]">
         <div className="flex flex-col gap-[64px] justify-center items-center py-[62px]">
-          
           {/* Section Title */}
           <h2 className="text-[36px] sm:text-[48px] font-bold leading-[41px] sm:leading-[55px] text-center text-text-primary font-aclonica">
             Products We Make
@@ -41,11 +40,10 @@ const ProductCategories = () => {
 
           {/* Categories Grid */}
           <div className="flex flex-col gap-[20px] justify-start items-center w-full max-w-[1110px]">
-            
             {/* First Row */}
             <div className="flex flex-col sm:flex-row gap-[20px] justify-start items-center w-full">
               {categories.slice(0, 2).map((category) => (
-                <div 
+                <div
                   key={category.id}
                   className={`relative ${category.className} bg-secondary-background rounded-[20px] overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300`}
                 >
@@ -68,7 +66,7 @@ const ProductCategories = () => {
             {/* Second Row */}
             <div className="flex flex-col sm:flex-row gap-[20px] justify-start items-center w-full">
               {categories.slice(2, 4).map((category) => (
-                <div 
+                <div
                   key={category.id}
                   className={`relative ${category.className} bg-secondary-background rounded-[20px] overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300`}
                 >
@@ -91,7 +89,7 @@ const ProductCategories = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default ProductCategories
+export default ProductCategories;
