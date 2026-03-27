@@ -1,7 +1,7 @@
 // types.ts
 
 export interface Review {
-  id: string;
+  id: number;
   name: string;
   rating: number;
   comment: string;
@@ -10,7 +10,7 @@ export interface Review {
 }
 
 export interface ProductImage {
-  id: string;
+  id: number;
   src: string;
 }
 
@@ -36,7 +36,7 @@ export interface Product {
 }
 
 export interface RelatedProduct {
-  id: string;
+  id: number;
   slug: string;
   name: string;
   price: number;
