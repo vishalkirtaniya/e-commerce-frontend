@@ -1,37 +1,29 @@
-'use client';
-import Image from'next/image';
- import Button from'@/components/ui/Button';
- import RatingBar from'@/components/ui/RatingBar';
+"use client";
+import Image from "next/image";
+import Link from "next/link";
+import Button from "@/components/ui/Button";
+import RatingBar from "@/components/ui/RatingBar";
 
-interface Product {
-  id: number
-  name: string
-  price: string
-  originalPrice?: string
-  discount?: string
-  rating: number
-  image: string
+export interface Product {
+  id: number;
+  name: string;
+  price: string;
+  originalPrice?: string;
+  discount?: string;
+  rating: number;
+  image: string;
 }
 
-interface TopSellingProps {
-  products: Product[]
-  loading: boolean
+export interface TopSellingProps {
+  products: Product[];
+  loading: boolean;
 }
 
 const TopSelling = ({ products, loading }: TopSellingProps) => {
-  const handleViewAll = (): void => {
-    // Navigate to all products page
-  }
-
-  const handleProductClick = (productId: number): void => {
-    // Navigate to product detail page
-  }
-
   return (
     <section className="w-full bg-secondary-background mt-[62px] px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-[1240px] mx-auto py-[62px]">
         <div className="flex flex-col gap-[54px] justify-start items-center">
-          
           {/* Section Title */}
           <h2 className="text-[36px] sm:text-[48px] font-bold leading-[43px] sm:leading-[58px] text-center text-text-primary font-integral">
             top selling
@@ -54,10 +46,10 @@ const TopSelling = ({ products, loading }: TopSellingProps) => {
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[20px] w-full">
               {products.map((product) => (
-                <div 
+                <Link
                   key={product.id}
-                  className="flex flex-col gap-[16px] cursor-pointer group"
-                  onClick={() => handleProductClick(product.id)}
+                  href={`/shop/${product.id}`}
+                  className="flex flex-col gap-[16px] group"
                 >
                   {/* Product Image */}
                   <div className="relative w-full bg-secondary-dark rounded-[20px] overflow-hidden group-hover:shadow-lg transition-shadow duration-300">
@@ -72,7 +64,6 @@ const TopSelling = ({ products, loading }: TopSellingProps) => {
 
                   {/* Product Details */}
                   <div className="flex flex-col gap-[6px] justify-start items-start">
-                    
                     {/* Product Name */}
                     <h3 className="text-lg sm:text-[20px] font-bold leading-[24px] sm:leading-[27px] text-left text-text-primary font-satoshi capitalize">
                       {product.name}
@@ -106,36 +97,37 @@ const TopSelling = ({ products, loading }: TopSellingProps) => {
                               text_color="text-accent-color"
                               fill_background_color="bg-accent-light"
                               border_border_radius="rounded-sm"
-                              className='px-5 py-1'
+                              className="px-5 py-1"
                             />
                           )}
                         </>
                       )}
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
 
           {/* View All Button */}
-          <Button
-            text="View All"
-            text_font_size="text-base"
-            text_font_family="Satoshi"
-            text_font_weight="font-medium"
-            text_line_height="leading-[22px]"
-            text_color="text-text-primary"
-            fill_background_color="bg-transparent"
-            border_border="border border-border-primary"
-            border_border_radius="rounded-[26px]"
-            padding="py-[14px] px-[34px]"
-            onClick={handleViewAll}
-          />
+          <Link href="/shop">
+            <Button
+              text="View All"
+              text_font_size="text-base"
+              text_font_family="Satoshi"
+              text_font_weight="font-medium"
+              text_line_height="leading-[22px]"
+              text_color="text-text-primary"
+              fill_background_color="bg-transparent"
+              border_border="border border-border-primary"
+              border_border_radius="rounded-[26px]"
+              padding="py-[14px] px-[34px]"
+            />
+          </Link>
         </div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default TopSelling
+export default TopSelling;

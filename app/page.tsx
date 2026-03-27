@@ -1,154 +1,157 @@
-'use client';
-import { useState, useEffect } from 'react';
- import Header from'@/components/Header';
- import Footer from'@/components/Footer';
- import HeroSection from'@/components/HeroSection';
- import ProductCategories from'@/components/ProductCategories';
- import NewArrivals from'@/components/NewArrivals';
- import TopSelling from'@/components/TopSelling';
- import CustomerReviews from'@/components/CustomerReviews';
+"use client";
+import { useState, useEffect } from "react";
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
+import HeroSection from "@/components/HeroSection";
+import ProductCategories from "@/components/ProductCategories";
+import NewArrivals from "@/components/NewArrivals";
+import TopSelling from "@/components/TopSelling";
+import CustomerReviews from "@/components/CustomerReviews";
 
+// ── Base URL — set NEXT_PUBLIC_API_URL in your .env.local ─────
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3500";
+
+// ── Types matching backend response shapes ─────────────────────
+interface ApiProduct {
+  id: number;
+  slug: string;
+  name: string;
+  price: number;
+  original_price: number | null;
+  discount: number | null;
+  rating: number;
+  image: string | null;
+}
+
+interface ApiReview {
+  id: number;
+  name: string;
+  rating: number;
+  comment: string;
+  verified: boolean;
+}
+
+// ── Types expected by UI components ───────────────────────────
 interface Product {
-  id: number
-  name: string
-  price: string
-  originalPrice?: string
-  discount?: string
-  rating: number
-  image: string
+  id: number;
+  name: string;
+  price: string;
+  originalPrice?: string;
+  discount?: string;
+  rating: number;
+  image: string;
 }
 
 interface Customer {
-  id: number
-  name: string
-  rating: number
-  comment: string
-  verified: boolean
+  id: number;
+  name: string;
+  rating: number;
+  comment: string;
+  verified: boolean;
 }
 
+// ── Helpers ───────────────────────────────────────────────────
+function formatPrice(amount: number): string {
+  return `₹${amount.toLocaleString("en-IN")}`;
+}
+
+function formatDiscount(discount: number): string {
+  return `-${discount}%`;
+}
+
+function mapProduct(p: ApiProduct): Product {
+  return {
+    id: p.id,
+    name: p.name,
+    price: formatPrice(p.price),
+    originalPrice: p.original_price ? formatPrice(p.original_price) : undefined,
+    discount: p.discount ? formatDiscount(p.discount) : undefined,
+    rating: p.rating,
+    image: p.image ?? "/images/placeholder.png",
+  };
+}
+
+// ── Page component ────────────────────────────────────────────
 export default function HomePage() {
-  const [newArrivals, setNewArrivals] = useState<Product[]>([])
-  const [topSellingProducts, setTopSellingProducts] = useState<Product[]>([])
-  const [customerReviews, setCustomerReviews] = useState<Customer[]>([])
-  const [loading, setLoading] = useState(true)
+  const [newArrivals, setNewArrivals] = useState<Product[]>([]);
+  const [topSellingProducts, setTopSellingProducts] = useState<Product[]>([]);
+  const [customerReviews, setCustomerReviews] = useState<Customer[]>([]);
+
+  const [loadingArrivals, setLoadingArrivals] = useState(true);
+  const [loadingTopSelling, setLoadingTopSelling] = useState(true);
+  const [loadingReviews, setLoadingReviews] = useState(true);
+
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadHomePageData()
-  }, [])
+    loadHomePageData();
+  }, []);
 
   const loadHomePageData = async (): Promise<void> => {
+    // Fire all 3 requests in parallel — don't let one failure block others
+    await Promise.allSettled([
+      fetchNewArrivals(),
+      fetchTopSelling(),
+      fetchReviews(),
+    ]);
+  };
+
+  const fetchNewArrivals = async (): Promise<void> => {
     try {
-      // Simulate API calls
-      setTimeout(() => {
-        setNewArrivals([
-          {
-            id: 1,
-            name: 'T-shirt with tape details',
-            price: '$120',
-            rating: 4.5,
-            image: '/images/img_image_7.png'
-          },
-          {
-            id: 2,
-            name: 'Skinny fit jeans',
-            price: '$240',
-            originalPrice: '$260',
-            discount: '-20%',
-            rating: 3.5,
-            image: '/images/img_image_8.png'
-          },
-          {
-            id: 3,
-            name: 'Checkered shirt',
-            price: '$180',
-            rating: 4.5,
-            image: '/images/img_image_9.png'
-          },
-          {
-            id: 4,
-            name: 'Sleeve striped T-shirt',
-            price: '$130',
-            originalPrice: '$160',
-            discount: '-30%',
-            rating: 4.5,
-            image: '/images/img_image_10.png'
-          }
-        ])
-
-        setTopSellingProducts([
-          {
-            id: 1,
-            name: 'Vertical striped shirt',
-            price: '$212',
-            originalPrice: '$232',
-            discount: '-20%',
-            rating: 5.0,
-            image: '/images/image_7.png'
-          },
-          {
-            id: 2,
-            name: 'Courage graphic T-shirt',
-            price: '$145',
-            rating: 4.0,
-            image: '/images/image_8.png'
-          },
-          {
-            id: 3,
-            name: 'Loose fit bermuda shorts',
-            price: '$80',
-            rating: 3.0,
-            image: '/images/image_9.png'
-          },
-          {
-            id: 4,
-            name: 'Faded skinny jeans',
-            price: '$210',
-            rating: 4.5,
-            image: '/images/image_10.png'
-          }
-        ])
-
-        setCustomerReviews([
-          {
-            id: 1,
-            name: 'Sarah M.',
-            rating: 5,
-            comment: 'I am blown away by the quality and style of the clothes I received from Shop.co. From casual wear to elegant dresses, every piece I have bought has exceeded my expectations.',
-            verified: true
-          },
-          {
-            id: 2,
-            name: 'Alex K.',
-            rating: 5,
-            comment: 'Finding clothes that align with my personal style used to be a challenge until I discovered Shop.co. The range of options they offer is truly remarkable, catering to a variety of tastes and occasions.',
-            verified: true
-          },
-          {
-            id: 3,
-            name: 'James L.',
-            rating: 5,
-            comment: 'As someone who is always on the lookout for unique fashion pieces, I am thrilled to have stumbled upon Shop.co. The selection of clothes is not only diverse but also on-point with the latest trends.',
-            verified: true
-          }
-        ])
-
-        setLoading(false)
-      }, 1000)
-    } catch (error) {
-      console.error('Failed to load homepage data:', error)
-      setLoading(false)
+      const res = await fetch(`${API_URL}/api/new-arrivals?limit=4`);
+      if (!res.ok) throw new Error(`new-arrivals: ${res.status}`);
+      const json: { data: ApiProduct[] } = await res.json();
+      setNewArrivals(json.data.map(mapProduct));
+    } catch (err) {
+      console.error("Failed to load new arrivals:", err);
+      setError("Failed to load some content. Please refresh.");
+    } finally {
+      setLoadingArrivals(false);
     }
-  }
+  };
+
+  const fetchTopSelling = async (): Promise<void> => {
+    try {
+      const res = await fetch(`${API_URL}/api/top-selling?limit=4`);
+      if (!res.ok) throw new Error(`top-selling: ${res.status}`);
+      const json: { data: ApiProduct[] } = await res.json();
+      setTopSellingProducts(json.data.map(mapProduct));
+    } catch (err) {
+      console.error("Failed to load top selling:", err);
+      setError("Failed to load some content. Please refresh.");
+    } finally {
+      setLoadingTopSelling(false);
+    }
+  };
+
+  const fetchReviews = async (): Promise<void> => {
+    try {
+      const res = await fetch(`${API_URL}/api/reviews?limit=3&featured=true`);
+      if (!res.ok) throw new Error(`reviews: ${res.status}`);
+      const json: { data: ApiReview[] } = await res.json();
+      setCustomerReviews(json.data);
+    } catch (err) {
+      console.error("Failed to load reviews:", err);
+      setError("Failed to load some content. Please refresh.");
+    } finally {
+      setLoadingReviews(false);
+    }
+  };
 
   return (
     <>
       <main>
+        {error && (
+          <div className="w-full bg-red-50 text-red-600 text-sm text-center py-2 px-4">
+            {error}
+          </div>
+        )}
         <HeroSection />
         <ProductCategories />
-        <NewArrivals products={newArrivals} loading={loading} />
-        <TopSelling products={topSellingProducts} loading={loading} />
-        <CustomerReviews reviews={customerReviews} loading={loading} />
+        <NewArrivals products={newArrivals} loading={loadingArrivals} />
+        <TopSelling products={topSellingProducts} loading={loadingTopSelling} />
+        <CustomerReviews reviews={customerReviews} loading={loadingReviews} />
       </main>
     </>
-  )
+  );
 }

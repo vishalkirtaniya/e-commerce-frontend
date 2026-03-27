@@ -17,14 +17,13 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  console.log(product);
   return (
     <Link href={`/shop/${product.slug}`} className="block space-y-2 group">
       <div className="bg-gray-100 rounded-xl overflow-hidden z-10">
-        <Image
+        <img
           src={product.image}
           alt={product.name}
-          width={300}
-          height={300}
           className="w-full h-full object-contain group-hover:scale-[1.02] transition"
         />
       </div>

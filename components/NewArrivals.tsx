@@ -31,7 +31,6 @@ const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
     <section className="w-full bg-secondary-background mt-[96px] px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-[1240px] mx-auto py-[62px]">
         <div className="flex flex-col gap-[32px] justify-start items-center">
-          
           {/* Section Title */}
           <h2 className="text-[36px] sm:text-[48px] font-bold leading-[41px] sm:leading-[55px] text-center text-text-primary font-aclonica">
             NEW ARRIVALS
@@ -72,7 +71,6 @@ const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
 
                   {/* Product Details */}
                   <div className="flex flex-col gap-[6px] justify-start items-start">
-                    
                     {/* Product Name */}
                     <h3 className="text-lg sm:text-[20px] font-bold leading-[24px] sm:leading-[27px] text-left text-text-primary font-satoshi capitalize">
                       {product.name}
@@ -138,7 +136,7 @@ const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
         <div className="w-full h-[1px] bg-border-primary mt-[64px]"></div>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default NewArrivals
+export default NewArrivals;
