@@ -1,22 +1,22 @@
-'use client';
+"use client";
 
-import ProductCard from './ProductCard';
-import { PaginationMeta, ApiProduct } from '@/app/shop/page';
+import ProductCard from "./ProductCard";
+import { PaginationMeta, ApiProduct } from "@/app/shop/page";
 
 interface Props {
-  products:     ApiProduct[];
-  meta:         PaginationMeta | null;
-  loading:      boolean;
-  sortBy:       string;
+  products: ApiProduct[];
+  meta: PaginationMeta | null;
+  loading: boolean;
+  sortBy: string;
   onSortChange: (sort: string) => void;
   onPageChange: (page: number) => void;
 }
 
 const SORT_OPTIONS = [
-  { value: 'newest',     label: 'Newest' },
-  { value: 'price_asc',  label: 'Price: Low to High' },
-  { value: 'price_desc', label: 'Price: High to Low' },
-  { value: 'rating',     label: 'Most Popular' },
+  { value: "newest", label: "Newest" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
+  { value: "rating", label: "Most Popular" },
 ];
 
 export default function ProductGrid({
@@ -27,7 +27,6 @@ export default function ProductGrid({
   onSortChange,
   onPageChange,
 }: Props) {
-
   return (
     <>
       {/* Header — count + sort */}
@@ -37,7 +36,8 @@ export default function ProductGrid({
           {meta && (
             <p className="text-sm text-gray-500 mt-1">
               Showing {(meta.page - 1) * meta.limit + 1}–
-              {Math.min(meta.page * meta.limit, meta.total)} of {meta.total} Products
+              {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}{" "}
+              Products
             </p>
           )}
         </div>
@@ -86,13 +86,13 @@ export default function ProductGrid({
             <ProductCard
               key={product.id}
               product={{
-                slug:          product.slug,
-                image:         product.image ?? '/images/placeholder.png',
-                name:          product.name,
-                rating:        `${product.rating}/5`,
-                price:         product.price,
+                slug: product.slug,
+                image: product.image ?? "/images/placeholder.png",
+                name: product.name,
+                rating: `${product.rating}/5`,
+                price: product.price,
                 originalPrice: product.original_price ?? undefined,
-                discount:      product.discount ? product.discount : undefined,
+                discount: product.discount ? product.discount : undefined,
               }}
             />
           ))}
@@ -138,9 +138,10 @@ export default function ProductGrid({
                 key={page}
                 onClick={() => onPageChange(page)}
                 className={`w-9 h-9 text-sm rounded-full transition
-                  ${isActive
-                    ? 'bg-black text-white'
-                    : 'border border-gray-200 hover:border-black'
+                  ${
+                    isActive
+                      ? "bg-black text-white"
+                      : "border border-gray-200 hover:border-black"
                   }`}
               >
                 {page}

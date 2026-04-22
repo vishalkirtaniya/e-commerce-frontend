@@ -8,7 +8,6 @@ import Button from "@/components/ui/Button";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
 
-// ── Types ─────────────────────────────────────────────────────
 interface Size {
   id: number;
   label: string;
@@ -37,10 +36,28 @@ interface Props {
   product: Product;
 }
 
+// ── Helper: turn any error shape into a readable string ───────
+function parseError(err: unknown): string {
+  if (typeof err === "string") return err;
+  if (err instanceof Error) return err.message;
+  if (typeof err === "object" && err !== null) {
+    // Zod field errors shape: { field: ['message'] }
+    const entries = Object.entries(err as Record<string, unknown>);
+    if (entries.length > 0) {
+      return entries
+        .map(
+          ([field, msgs]) =>
+            `${field}: ${Array.isArray(msgs) ? msgs.join(", ") : String(msgs)}`,
+        )
+        .join(" | ");
+    }
+  }
+  return "Something went wrong";
+}
+
 export default function ProductInfo({ product }: Props) {
   const router = useRouter();
 
-  // Default to the is_default size, fall back to first
   const defaultSize =
     product.sizes.find((s) => s.is_default) ?? product.sizes[0];
 
@@ -55,7 +72,6 @@ export default function ProductInfo({ product }: Props) {
     text: string;
   } | null>(null);
 
-  // Active price — use selected size price if available, else base price
   const activePrice = selectedSize?.price ?? product.price;
 
   const handleQuantityChange = (delta: number) => {
@@ -81,7 +97,8 @@ export default function ProductInfo({ product }: Props) {
         },
         body: JSON.stringify({
           product_id: product.id,
-          product_size_id: selectedSize?.id ?? null,
+          // Send undefined instead of null — cleaner for optional fields
+          product_size_id: selectedSize?.id ?? undefined,
           quantity,
           customization: customization.trim() || undefined,
         }),
@@ -92,14 +109,16 @@ export default function ProductInfo({ product }: Props) {
         return;
       }
 
+      const data = await res.json();
+
       if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.error ?? "Failed to add to cart");
+        // data.error may be a string or a Zod field-error object
+        const message =
+          typeof data.error === "string" ? data.error : parseError(data.error);
+        throw new Error(message);
       }
 
       setCartMessage({ type: "success", text: "Added to cart successfully!" });
-
-      // Clear message after 3s
       setTimeout(() => setCartMessage(null), 3000);
     } catch (err: any) {
       setCartMessage({
@@ -135,18 +154,16 @@ export default function ProductInfo({ product }: Props) {
         </span>
       </div>
 
-      {/* Price — updates when size changes */}
+      {/* Price */}
       <div className="flex items-center gap-3 mb-4">
         <span className="text-[24px] sm:text-[32px] font-bold leading-[33px] sm:leading-[44px] text-text-primary font-satoshi">
           ₹{activePrice.toLocaleString("en-IN")}
         </span>
-
         {product.originalPrice && (
           <span className="text-[24px] sm:text-[32px] font-bold leading-[33px] sm:leading-[44px] text-text-accent line-through font-satoshi opacity-30">
             ₹{product.originalPrice.toLocaleString("en-IN")}
           </span>
         )}
-
         {product.discount && (
           <Button
             text={`-${product.discount}%`}
@@ -172,7 +189,7 @@ export default function ProductInfo({ product }: Props) {
 
       <div className="w-full h-[1px] bg-border-primary mb-6" />
 
-      {/* Size options — from DB, each with its own price */}
+      {/* Size options */}
       {product.sizes.length > 0 && (
         <>
           <div className="mb-6">
@@ -184,7 +201,6 @@ export default function ProductInfo({ product }: Props) {
                 </span>
               )}
             </p>
-
             <div className="flex flex-wrap gap-3">
               {product.sizes.map((size) => {
                 const active = selectedSize?.id === size.id;
@@ -210,12 +226,11 @@ export default function ProductInfo({ product }: Props) {
               })}
             </div>
           </div>
-
           <div className="w-full h-[1px] bg-border-primary mb-6" />
         </>
       )}
 
-      {/* Customization note — only for customizable products */}
+      {/* Customization */}
       {product.isCustomizable && (
         <>
           <div className="mb-6">
@@ -235,20 +250,15 @@ export default function ProductInfo({ product }: Props) {
               {customization.length}/500
             </p>
           </div>
-
           <div className="w-full h-[1px] bg-border-primary mb-6" />
         </>
       )}
 
-      {/* Cart feedback message */}
+      {/* Cart feedback */}
       {cartMessage && (
         <div
           className={`mb-4 px-4 py-2.5 rounded-xl text-sm font-medium
-          ${
-            cartMessage.type === "success"
-              ? "bg-green-50 text-green-700"
-              : "bg-red-50 text-red-600"
-          }`}
+          ${cartMessage.type === "success" ? "bg-green-50 text-green-700" : "bg-red-50 text-red-600"}`}
         >
           {cartMessage.text}
         </div>
@@ -256,28 +266,24 @@ export default function ProductInfo({ product }: Props) {
 
       {/* Quantity + Add to Cart + Buy Now */}
       <div className="flex w-full flex-col sm:flex-row gap-4 sm:gap-5 items-stretch sm:items-center">
-        {/* Quantity */}
         <div className="flex w-1/3 items-center justify-evenly bg-[#f0f0f0] rounded-[26px] px-1 py-3.5 sm:w-[30%]">
           <button
-            onClick={() => handleQuantityChange(1)}
+            onClick={() => handleQuantityChange(-1)}
             className="w-6 h-6 flex items-center justify-center hover:bg-white transition rounded-full"
           >
             <Image src="/icons/minus.svg" alt="-" width={12} height={12} />
           </button>
-
           <span className="text-base font-medium text-text-primary font-satoshi">
             {quantity}
           </span>
-
           <button
-            onClick={() => handleQuantityChange(-1)}
+            onClick={() => handleQuantityChange(1)}
             className="w-6 h-6 flex items-center justify-center hover:bg-white transition rounded-full"
           >
             <Image src="/icons/plus.svg" alt="+" width={12} height={12} />
           </button>
         </div>
 
-        {/* Add to Cart */}
         <Button
           text={loading ? "Adding..." : "Add to Cart"}
           text_font_size="text-base"
@@ -289,7 +295,6 @@ export default function ProductInfo({ product }: Props) {
           className="w-1/3 sm:flex-1 px-2 py-3.5 disabled:opacity-60"
         />
 
-        {/* Buy Now */}
         <Button
           text="Buy Now"
           text_font_size="text-base"
