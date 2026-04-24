@@ -37,11 +37,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       </div>
 
       <div className="flex items-center gap-2">
-        <span className="font-semibold">${product.price}</span>
+        <span className="font-semibold">₹{product.price}</span>
 
         {product.originalPrice && (
           <span className="line-through text-gray-400">
-            ${product.originalPrice}
+            ₹{product.originalPrice}
           </span>
         )}
 

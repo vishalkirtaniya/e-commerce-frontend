@@ -9,9 +9,7 @@ interface Props {
 }
 
 export default function ProductGallery({ images }: Props) {
-  const [selectedImage, setSelectedImage] = useState<ProductImage>(
-    images[0]
-  );
+  const [selectedImage, setSelectedImage] = useState<ProductImage>(images[0]);
 
   return (
     <div className="flex flex-col md:flex-row gap-[14px] w-full lg:w-[55%]">
@@ -27,11 +25,9 @@ export default function ProductGallery({ images }: Props) {
                 : "border-transparent hover:scale-105"
             }`}
           >
-            <Image
+            <img
               src={img.src}
               alt="Product thumbnail"
-              width={152}
-              height={166}
               className="w-full h-full object-cover"
             />
           </button>
@@ -40,13 +36,10 @@ export default function ProductGallery({ images }: Props) {
 
       {/* Main Product Image */}
       <div className="order-1 md:order-2 w-full md:w-[70%] h-[300px] md:h-[530px] rounded-[20px] overflow-hidden bg-secondary-dark ml-0 md:ml-[14px]">
-        <Image
+        <img
           src={selectedImage.src}
           alt="Selected product image"
-          width={444}
-          height={530}
           className="w-full h-full object-cover transition-all duration-300"
-          priority
         />
       </div>
     </div>

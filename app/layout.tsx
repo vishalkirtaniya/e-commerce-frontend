@@ -1,8 +1,5 @@
 import React from "react";
 import "./globals.css";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
-import ReduxProvider from "@/components/ReduxProvider";
 
 export const viewport = {
   width: "device-width",
@@ -18,7 +15,6 @@ export const metadata = {
     "Discover premium fashion at SHOP.CO - your ultimate destination for casual, formal, party, and gym wear. Shop new arrivals, top-selling items with customer reviews.",
   keywords:
     "fashion store, clothing, casual wear, formal wear, party wear, gym wear, online shopping, premium fashion, new arrivals, trending clothes",
-
   openGraph: {
     type: "website",
     title: {
@@ -32,18 +28,12 @@ export const metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body>
-        <ReduxProvider>
-          <Header />
-          {children}
-          <Footer />
-        </ReduxProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

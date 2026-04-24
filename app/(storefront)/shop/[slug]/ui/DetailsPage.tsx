@@ -61,6 +61,7 @@ export default function ProductDetailPage({
   reviews,
   relatedProducts,
 }: Props) {
+  console.log(`product: ${product.images}`)
   return (
     <div className="w-full bg-bg-main">
       <main className="w-full max-w-[1240px] mx-auto px-4 sm:px-6 lg:px-8">

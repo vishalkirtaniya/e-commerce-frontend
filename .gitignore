@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+/.codex
+/graphify-out
+
+AGENTS.md
 
 # next.js
 /.next/
