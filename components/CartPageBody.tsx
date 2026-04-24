@@ -287,11 +287,9 @@ export default function CartPageBody() {
                   <div className="flex items-center gap-4">
                     <div className="w-[80px] h-[80px] bg-gray-100 rounded-xl overflow-hidden">
                       {item.image ? (
-                        <Image
+                        <img
                           src={item.image}
                           alt={item.name}
-                          width={80}
-                          height={80}
                           className="w-full h-full object-contain"
                         />
                       ) : (

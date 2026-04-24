@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Script from "next/script";
 import Button from "@/components/ui/Button";
 import BreadCrumb from "@/components/ui/BreadCrumb";
@@ -517,11 +516,9 @@ export default function CheckoutPage() {
                       className="flex items-center gap-3"
                     >
                       <div className="w-12 h-12 bg-gray-100 rounded-xl overflow-hidden flex-shrink-0">
-                        <Image
+                        <img
                           src={item.image ?? "/images/placeholder.png"}
                           alt={item.name}
-                          width={48}
-                          height={48}
                           className="w-full h-full object-contain"
                         />
                       </div>
