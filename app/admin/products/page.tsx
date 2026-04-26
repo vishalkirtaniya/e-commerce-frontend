@@ -16,6 +16,7 @@ interface FormErrors {
   name?: string;
   sku?: string;
   slug?: string;
+  material?: string;
   description?: string;
   category_id?: string;
   price?: string;
@@ -598,16 +599,12 @@ function emptyForm(): FormState {
     price: "",
     original_price: "",
     discount: "",
-    category_id: "1",
+    category_id: "0",
     is_new_arrival: false,
     is_top_selling: false,
     is_customizable: true,
     is_sold_out: false,
-    sizes: [
-      { label: "S", price: "" },
-      { label: "M", price: "" },
-      { label: "L", price: "" },
-    ],
+    sizes: [],
   };
 }
 
@@ -1029,6 +1026,7 @@ export default function AdminProductsPage() {
               style={{
                 ...S.input,
                 borderColor: formErrors.category_id ? "#c0392b" : "#e8e8e8",
+                color: form.category_id === "0" ? "#aaa" : "#000",
               }}
               value={form.category_id}
               onChange={(e) => {
@@ -1036,7 +1034,9 @@ export default function AdminProductsPage() {
                 setFormErrors((p) => ({ ...p, category_id: undefined }));
               }}
             >
-              <option value="0">Select category</option>
+              <option value="0" disabled>
+                Select a category...
+              </option>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
                   {c.name}
@@ -1049,21 +1049,37 @@ export default function AdminProductsPage() {
               </div>
             )}
           </div>
+
           <div style={S.field}>
             <label style={S.label}>
               Material <span style={{ color: "#c0392b" }}>*</span>
             </label>
             <select
-              style={{ ...S.input }}
+              style={{
+                ...S.input,
+                borderColor: formErrors.material ? "#c0392b" : "#e8e8e8",
+                color: !form.material ? "#aaa" : "#000",
+              }}
               value={form.material}
-              onChange={(e) => setField("material", e.target.value)}
+              onChange={(e) => {
+                setField("material", e.target.value);
+                setFormErrors((p) => ({ ...p, material: undefined }));
+              }}
             >
+              <option value="" disabled>
+                Select a material...
+              </option>
               {materials.map((m) => (
                 <option key={m} value={m}>
                   {m}
                 </option>
               ))}
             </select>
+            {formErrors.material && (
+              <div style={{ fontSize: 11, color: "#c0392b", marginTop: 4 }}>
+                ⚠ {formErrors.material}
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -1685,11 +1701,23 @@ export default function AdminProductsPage() {
   async function handleDelete(p: Product) {
     if (!confirm(`Delete "${p.name}"? This cannot be undone.`)) return;
     try {
-      console.log("handledelete");
-      await adminApi.deleteProduct(String(p.id));
-      setProducts((prev) => prev.filter((x) => x.id !== p.id));
-    } catch {
-      alert("Failed to delete product");
+      const result = (await adminApi.deleteProduct(String(p.id))) as {
+        archived: boolean;
+      };
+
+      if (result.archived) {
+        // Product had orders — it was archived not deleted
+        // Update UI to remove from list (archived products are hidden)
+        setProducts((prev) => prev.filter((x) => x.id !== p.id));
+        alert(
+          `"${p.name}" has been archived and marked as sold out because it has existing orders. It will no longer appear on the storefront.`,
+        );
+      } else {
+        // Actually deleted
+        setProducts((prev) => prev.filter((x) => x.id !== p.id));
+      }
+    } catch (err: unknown) {
+      alert(err instanceof Error ? err.message : "Failed to delete product");
     }
   }
 

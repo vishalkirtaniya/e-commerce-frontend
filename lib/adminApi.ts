@@ -16,10 +16,12 @@ async function adminFetch<T>(
 ): Promise<T> {
   const token = options.token ?? getToken();
 
+  const hasBody = options.body !== undefined && options.body !== null;
+
   const res = await fetch(`${BASE_URL}${path}`, {
     ...options,
     headers: {
-      "Content-Type": "application/json",
+      ...(hasBody ? { "Content-Type": "application/json" } : {}),
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...options.headers,
     },
@@ -181,4 +183,121 @@ export const adminApi = {
       method: "POST",
       body: JSON.stringify({ name }),
     }),
+
+  // Customers
+  getCustomers: () => adminFetch<unknown[]>("/admin/customers"),
+
+  getCustomerStats: () =>
+    adminFetch<{
+      total_customers: number;
+      new_this_month: number;
+      with_orders: number;
+      avg_order_value: number;
+    }>("/admin/customers/stats"),
+
+  // Analytics
+  getAnalyticsOverview: (period: number) =>
+    adminFetch<{
+      revenue: number;
+      orders: number;
+      aov: number;
+      revenue_delta: number;
+      orders_delta: number;
+      aov_delta: number;
+      conversion_rate: number;
+      total_customers: number;
+      customers_with_orders: number;
+    }>(`/admin/analytics/overview?period=${period}`),
+
+  getRevenueChart: (period: number) =>
+    adminFetch<{ period: string; revenue: number; orders: number }[]>(
+      `/admin/analytics/revenue?period=${period}`,
+    ),
+
+  getOrdersByStatus: (period: number) =>
+    adminFetch<{ status: string; count: number; percentage: number }[]>(
+      `/admin/analytics/orders-by-status?period=${period}`,
+    ),
+
+  getTopProducts: (period: number) =>
+    adminFetch<
+      {
+        product_id: number;
+        name: string;
+        revenue: number;
+        units_sold: number;
+        order_count: number;
+      }[]
+    >(`/admin/analytics/top-products?period=${period}`),
+
+  getRevenueByMaterial: (period: number) =>
+    adminFetch<{ material: string; revenue: number; units_sold: number }[]>(
+      `/admin/analytics/revenue-by-material?period=${period}`,
+    ),
+
+  getRevenueByCategory: (period: number) =>
+    adminFetch<{ category: string; revenue: number; units_sold: number }[]>(
+      `/admin/analytics/revenue-by-category?period=${period}`,
+    ),
+
+  getCustomerGrowth: (period: number) =>
+    adminFetch<{ period: string; new_customers: number }[]>(
+      `/admin/analytics/customer-growth?period=${period}`,
+    ),
+
+  // Promos
+  getPromos: () => adminFetch<unknown[]>("/admin/promos"),
+
+  getPromoStats: () =>
+    adminFetch<{
+      total: number;
+      active: number;
+      inactive: number;
+      expired: number;
+      times_used: number;
+      total_discount_given: number;
+    }>("/admin/promos/stats"),
+
+  createPromo: (body: {
+    code: string;
+    discount_percent: number;
+    is_active: boolean;
+    expires_at: string | null;
+  }) =>
+    adminFetch("/admin/promos", { method: "POST", body: JSON.stringify(body) }),
+
+  updatePromo: (id: number, body: Record<string, unknown>) =>
+    adminFetch(`/admin/promos/${id}`, {
+      method: "PATCH",
+      body: JSON.stringify(body),
+    }),
+
+  togglePromo: (id: number) =>
+    adminFetch(`/admin/promos/${id}/toggle`, { method: "PATCH" }),
+
+  deletePromo: (id: number) =>
+    adminFetch<null>(`/admin/promos/${id}`, { method: "DELETE" }),
+
+  // Admin Users
+  getAdminUsers: () => adminFetch<unknown[]>("/admin/users"),
+
+  getAdminRoles: () =>
+    adminFetch<{ id: number; name: string; label: string }[]>(
+      "/admin/users/roles",
+    ),
+
+  getAdminAuditLog: (id: number) =>
+    adminFetch<unknown[]>(`/admin/users/${id}/audit-log`),
+
+  createAdminUser: (email: string, roleId: number) =>
+    adminFetch("/admin/users", {
+      method: "POST",
+      body: JSON.stringify({ email, role_id: roleId }),
+    }),
+
+  deactivateAdminUser: (id: number) =>
+    adminFetch(`/admin/users/${id}/deactivate`, { method: "PATCH" }),
+
+  reactivateAdminUser: (id: number) =>
+    adminFetch(`/admin/users/${id}/reactivate`, { method: "PATCH" }),
 };
