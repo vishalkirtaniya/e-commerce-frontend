@@ -2,6 +2,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { twMerge } from "tailwind-merge";
 import { InputHTMLAttributes, ReactNode, CSSProperties, useState } from "react";
+import { BorderAllRounded } from "@mui/icons-material";
 
 const searchClasses = cva(
   "inline-flex items-center transition-all duration-200 focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary-background",

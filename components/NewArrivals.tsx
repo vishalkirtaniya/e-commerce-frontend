@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Button from "@/components/ui/Button";
 import RatingBar from "@/components/ui/RatingBar";
 
@@ -60,11 +59,9 @@ const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
                 >
                   {/* Product Image */}
                   <div className="relative w-full bg-secondary-dark rounded-[20px] overflow-hidden group-hover:shadow-lg transition-shadow duration-300">
-                    <Image
+                    <img
                       src={product.image}
                       alt={product.name}
-                      width={294}
-                      height={298}
                       className="w-full h-[250px] sm:h-[298px] object-cover rounded-[20px] group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>

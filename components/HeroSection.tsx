@@ -1,6 +1,5 @@
 "use client";
 import Button from "@/components/ui/Button";
-import Image from "next/image";
 
 const HeroSection = () => {
   const handleShopNow = (): void => {
@@ -81,7 +80,7 @@ const HeroSection = () => {
           {/* Right Decorative Elements */}
           <div className="flex flex-col gap-[106px] justify-start items-start w-full lg:w-auto mt-[0px] lg:ml-auto">
             <div className="w-[104px] h-[104px] rounded-[52px] self-end">
-              <Image
+              <img
                 src="/icons/star.svg"
                 alt="decorative image"
                 width={104}
@@ -89,7 +88,7 @@ const HeroSection = () => {
               />
             </div>
             <div className="w-[56px] h-[56px] rounded-[28px] ml-[26px]">
-              <Image
+              <img
                 src="/icons/star.svg"
                 alt="decorative image"
                 width={56}

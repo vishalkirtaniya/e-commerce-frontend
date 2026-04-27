@@ -1,7 +1,7 @@
 "use client";
 
 import ProductCard from "./ProductCard";
-import { PaginationMeta, ApiProduct } from "@/app/shop/page";
+import { PaginationMeta, ApiProduct } from "@/app/(storefront)/page"
 
 interface Props {
   products: ApiProduct[];

@@ -270,9 +270,9 @@ export default function AdminDashboardPage() {
       {/* Quick Actions */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 12 }}>
         {[
-          { title: 'Add Product',    sub: 'Create a new listing',       href: '/admin/products/new' },
-          { title: 'Manage Orders',  sub: 'Update status & refunds',    href: '/admin/orders' },
-          { title: 'Promo Codes',    sub: 'Create & deactivate promos', href: '/admin/promos' },
+          { title: 'Add Product',    sub: 'Create a new listing',       href: '/admin/dashboard/products' },
+          { title: 'Manage Orders',  sub: 'Update status & refunds',    href: '/admin/dashboard/orders' },
+          { title: 'Promo Codes',    sub: 'Create & deactivate promos', href: '/admin/dashboard/promos' },
         ].map((a) => (
           <div
             key={a.title}

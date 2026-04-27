@@ -9,32 +9,32 @@ const NAV = [
     section: "Main",
     items: [
       { label: "Dashboard", href: "/admin/dashboard" },
-      { label: "Orders", href: "/admin/orders" },
-      { label: "Products", href: "/admin/products" },
+      { label: "Orders", href: "/admin/dashboard/orders" }, // 👈 updated
+      { label: "Products", href: "/admin/dashboard/products" }, // 👈 updated
     ],
   },
   {
     section: "Management",
     items: [
-      { label: "Customers", href: "/admin/customers" },
-      { label: "Promo Codes", href: "/admin/promos" },
-      { label: "Analytics", href: "/admin/analytics" },
+      { label: "Customers", href: "/admin/dashboard/customers" }, // 👈 updated
+      { label: "Promo Codes", href: "/admin/dashboard/promos" }, // 👈 updated
+      { label: "Analytics", href: "/admin/dashboard/analytics" }, // 👈 updated
     ],
   },
   {
     section: "Settings",
-    items: [{ label: "Admin Users", href: "/admin/users" }],
+    items: [{ label: "Admin Users", href: "/admin/dashboard/users" }], // 👈 updated
   },
 ];
 
 const PAGE_TITLES: Record<string, string> = {
   "/admin/dashboard": "Dashboard",
-  "/admin/orders": "Orders",
-  "/admin/products": "Products",
-  "/admin/customers": "Customers",
-  "/admin/promos": "Promo Codes",
-  "/admin/analytics": "Analytics",
-  "/admin/users": "Admin Users",
+  "/admin/dashboard/orders": "Orders",
+  "/admin/dashboard/products": "Products",
+  "/admin/dashboard/customers": "Customers",
+  "/admin/dashboard/promos": "Promo Codes",
+  "/admin/dashboard/analytics": "Analytics",
+  "/admin/dashboard/users": "Admin Users",
 };
 
 export function AdminShell({ children }: { children: React.ReactNode }) {

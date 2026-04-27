@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -194,11 +193,9 @@ export default function OrdersPage() {
                   <div className="flex gap-2">
                     {/* First item thumbnail */}
                     <div className="w-16 h-16 bg-gray-100 rounded-xl overflow-hidden">
-                      <Image
+                      <img
                         src={order.first_item_image}
                         alt={order.first_item_name}
-                        width={64}
-                        height={64}
                         className="w-full h-full object-contain"
                       />
                     </div>

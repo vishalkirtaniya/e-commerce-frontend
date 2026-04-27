@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import RatingBar from "@/components/ui/RatingBar";
 import { RelatedProduct } from "./types";
@@ -22,7 +21,7 @@ export default function RelatedProducts({
             className="space-y-3"
           >
             <div className="bg-gray-100 rounded-xl overflow-hidden">
-              <Image
+              <img
                 src={product.image}
                 alt={product.name}
                 width={300}

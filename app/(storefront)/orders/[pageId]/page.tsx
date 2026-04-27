@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import BreadCrumb from "@/components/ui/BreadCrumb";
 import Button from "@/components/ui/Button";
 import OrderProgressTracker from "@/components/OrderProgressTracker";
@@ -225,11 +224,9 @@ export default function OrderTrackingPage() {
             <div className="flex gap-4">
               <div className="w-[72px] h-[72px] bg-gray-100 rounded-xl overflow-hidden">
                 {item.image ? (
-                  <Image
+                  <img
                     src={item.image}
                     alt={item.name}
-                    width={72}
-                    height={72}
                     className="object-contain w-full h-full"
                   />
                 ) : (
