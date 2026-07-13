@@ -1,56 +1,227 @@
-// components/ProductGrid.tsx
-import ProductCard, { Product } from "./ProductCard";
+"use client";
 
-const PRODUCTS: Product[] = [
-  {
-    slug: "one-life-graphic-tshirt",
-    image: "/images/image_7.png",
-    name: "Gradient Graphic T-shirt",
-    rating: "3.5/5",
-    price: 145,
-    originalPrice: 160,
-    discount: 10,
-  },
-  {
-    slug: "one-life-graphic-tshirt",
-    image: "/images/image_8.png",
-    name: "Polo with Tipping Details",
-    rating: "4.5/5",
-    price: 180,
-  },
-  {
-    slug: "one-life-graphic-tshirt",
-    image: "/images/image_9.png",
-    name: "Black Striped T-shirt",
-    rating: "5.0/5",
-    price: 120,
-    originalPrice: 150,
-    discount: 30,
-  },
-  // more...
+import ProductCard from "./ProductCard";
+import { ApiProduct } from "@/app/(storefront)/page";
+import { PaginationMeta } from "@/app/(storefront)/shop/page";
+
+interface Props {
+  products: ApiProduct[];
+  meta: PaginationMeta | null;
+  loading: boolean;
+  sortBy: string;
+  onSortChange: (sort: string) => void;
+  onPageChange: (page: number) => void;
+  onOpenFilters?: () => void;
+}
+
+const SORT_OPTIONS = [
+  { value: "newest", label: "Newest" },
+  { value: "price_asc", label: "Price: Low to High" },
+  { value: "price_desc", label: "Price: High to Low" },
+  { value: "rating", label: "Most Popular" },
 ];
 
-
-export default function ProductGrid() {
+export default function ProductGrid({
+  products,
+  meta,
+  loading,
+  sortBy,
+  onSortChange,
+  onPageChange,
+  onOpenFilters,
+}: Props) {
   return (
     <>
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold">Casual</h1>
-        <p className="text-sm text-gray-500">
-          Showing 1–10 of 100 Products ·{" "}
-          <span className="font-medium cursor-pointer">
-            Sort by: Most Popular
-          </span>
-        </p>
+        <div className="flex items-center gap-3">
+          <div>
+            <h1 className="text-[28px] sm:text-[32px] font-bold capitalize">
+              Shop
+            </h1>
+
+            {meta && (
+              <p className="text-sm text-gray-500 mt-1">
+                Showing {(meta.page - 1) * meta.limit + 1}-
+                {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}{" "}
+                Products
+              </p>
+            )}
+          </div>
+        </div>
+
+        {/* Mobile Filter Button */}
+        <button
+          onClick={onOpenFilters}
+          className="lg:hidden w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center"
+        >
+          <img src="/icons/filter.svg" alt="Filters" className="w-5 h-5" />
+        </button>
+
+        {/* Desktop Sort */}
+        <div className="hidden lg:block">
+          <select
+            value={sortBy}
+            onChange={(e) => onSortChange(e.target.value)}
+            className="
+              text-sm
+              border
+              border-gray-200
+              rounded-full
+              px-4
+              py-2
+              outline-none
+              cursor-pointer
+              hover:border-gray-400
+              transition
+            "
+          >
+            {SORT_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
-      {/* Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
-        {PRODUCTS.map((product, index) => (
-          <ProductCard key={index} product={product} />
-        ))}
-      </div>
+      {/* Loading */}
+      {loading && (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="bg-gray-100 rounded-[20px] aspect-square mb-3" />
+              <div className="h-4 bg-gray-100 rounded w-3/4 mb-2" />
+              <div className="h-4 bg-gray-100 rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Empty State */}
+      {!loading && products.length === 0 && (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <p className="text-lg font-medium text-gray-600">No products found</p>
+
+          <p className="text-sm text-gray-400 mt-1">
+            Try adjusting or resetting your filters
+          </p>
+        </div>
+      )}
+
+      {/* Products */}
+      {!loading && products.length > 0 && (
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 lg:gap-6">
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={{
+                slug: product.slug,
+                images:
+                  product.images && product.images.length > 0
+                    ? product.images // ✅ return the full array
+                    : [product.image ?? "/images/placeholder.png"],
+                name: product.name,
+                rating: `${product.rating}/5`,
+                price: product.price,
+                originalPrice: product.original_price ?? undefined,
+                discount: product.discount ?? undefined,
+              }}
+            />
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {meta && meta.total_pages > 1 && !loading && (
+        <div className="mt-8 border-t pt-6">
+          <div className="flex items-center justify-between gap-2">
+            {/* Previous */}
+            <button
+              onClick={() => onPageChange(meta.page - 1)}
+              disabled={!meta.has_prev}
+              className="
+                px-4
+                py-2
+                text-sm
+                rounded-lg
+                border
+                border-gray-200
+                disabled:opacity-40
+                disabled:cursor-not-allowed
+                hover:border-black
+                transition
+              "
+            >
+              ← Previous
+            </button>
+
+            {/* Page Numbers */}
+            <div className="flex items-center gap-1">
+              {[...Array(meta.total_pages)].map((_, i) => {
+                const page = i + 1;
+                const isActive = page === meta.page;
+
+                const show =
+                  page === 1 ||
+                  page === meta.total_pages ||
+                  Math.abs(page - meta.page) <= 1;
+
+                if (!show) {
+                  if (page === 2 || page === meta.total_pages - 1) {
+                    return (
+                      <span key={page} className="px-2 text-gray-400 text-sm">
+                        ...
+                      </span>
+                    );
+                  }
+
+                  return null;
+                }
+
+                return (
+                  <button
+                    key={page}
+                    onClick={() => onPageChange(page)}
+                    className={`
+                      w-9
+                      h-9
+                      text-sm
+                      rounded-lg
+                      transition
+                      ${
+                        isActive ? "bg-gray-100 text-black" : "hover:bg-gray-50"
+                      }
+                    `}
+                  >
+                    {page}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Next */}
+            <button
+              onClick={() => onPageChange(meta.page + 1)}
+              disabled={!meta.has_next}
+              className="
+                px-4
+                py-2
+                text-sm
+                rounded-lg
+                border
+                border-gray-200
+                disabled:opacity-40
+                disabled:cursor-not-allowed
+                hover:border-black
+                transition
+              "
+            >
+              Next →
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 }

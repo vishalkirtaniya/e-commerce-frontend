@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Fonts must come BEFORE normal CSS rules */
 @font-face {
   font-family: "Integral CF";
   src: url("/fonts/integralcf-regular.woff2") format("woff2");
@@ -8,7 +7,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Integral CF";
   src: url("/fonts/integralcf-medium.woff2") format("woff2");
@@ -16,7 +14,6 @@
   font-style: normal;
   font-display: swap;
 }
-
 @font-face {
   font-family: "Integral CF";
   src: url("/fonts/integralcf-bold.woff2") format("woff2");
@@ -26,70 +23,66 @@
 }
 
 body {
-  font-family: "Inter CF", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Inter CF",
+    system-ui,
+    -apple-system,
+    sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
 .font-satoshi {
-  font-family: "Satoshi", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Satoshi",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
 .font-integral_cf {
-  font-family: "Integral CF", system-ui, -apple-system, sans-serif;
+  font-family:
+    "Integral CF",
+    system-ui,
+    -apple-system,
+    sans-serif;
 }
 
-@layer base {
-  :root {
-    --primary-background: #ffffff;
-    --primary-foreground: #ffffff;
-
-    --secondary-background: #f2f0f1;
-    --secondary-foreground: #f2f0f1;
-
-    --accent-color: #f2f0f1;
-    --accent-foreground: #f2f0f1;
-
-    --bg-main: #ffffff;
-    --bg-card: #f2f0f1;
-
-    --text-primary: #000000;
-    --text-secondary: #00000066;
-
-    --text-star-background: #ffcc33;
-  }
-}
-
-/* Tailwind v4 theme tokens */
-@layer theme {
-  :root {
-    /* Primary */
-    --color-primary: var(--primary-background);
-    --color-primary-foreground: var(--primary-foreground);
-
-    /* Secondary */
-    --color-secondary: var(--secondary-background);
-    --color-secondary-foreground: var(--secondary-foreground);
-
-    /* Accent */
-    --color-accent: var(--accent-color);
-    --color-accent-foreground: var(--accent-foreground);
-
-    /* Backgrounds */
-    --color-bg-main: var(--bg-main);
-    --color-bg-card: var(--bg-card);
-
-    /* Text */
-    --color-text-primary: var(--text-primary);
-    --color-text-secondary: var(--text-secondary);
-  }
+@theme {
+  --color-primary: #ffffff;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f2f0f1;
+  --color-secondary-foreground: #f2f0f1;
+  --color-accent: #f2f0f1;
+  --color-accent-foreground: #f2f0f1;
+  --color-bg-main: #ffffff;
+  --color-bg-card: #f2f0f1;
+  --color-text-primary: #000000;
+  --color-text-secondary: #00000066;
+  --color-header-background: #121212;
+  --color-header-text: #ffffff;
+  --color-header-search-bg: rgba(255, 255, 255, 0.1);
+  --color-header-search-text: #ffffff;
+  --color-header-search-placeholder: rgba(255, 255, 255, 0.5);
+  --color-header-divider: rgba(255, 255, 255, 0.1);
 }
 
 .input {
   @apply w-full bg-gray-100 rounded-xl px-4 py-3 outline-none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
 }
