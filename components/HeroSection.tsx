@@ -1,37 +1,28 @@
 "use client";
+
 import Button from "@/components/ui/Button";
+import Image from "next/image";
 
 const HeroSection = () => {
-  const handleShopNow = (): void => {
-    // Navigate to shop page
-  };
+  const handleShopNow = () => {};
 
   return (
-    <section
-      className="w-full bg-cover bg-center bg-no-repeat pt-[86px] pb-[86px] px-4 sm:px-6 lg:px-8"
-      style={{
-        backgroundImage: "url(/images/heroImage.png)",
-        backgroundColor: "#f2f0f1",
-      }}
-    >
-      <div className="w-full max-w-[1240px] mx-auto">
-        <div className="flex flex-col lg:flex-row justify-start items-start w-full">
-          {/* Left Content */}
-          <div className="flex flex-col justify-start items-start w-full lg:w-[622px] px-[18px] lg:px-[18px] mt-[16px]">
-            {/* Main Heading */}
-            <h1 className="text-[32px] sm:text-[48px] md:text-[56px] lg:text-[64px] font-bold leading-[40px] sm:leading-[52px] md:leading-[60px] lg:leading-[64px] text-left text-text-primary font-integral w-full lg:w-[92%]">
+    <section className="w-full bg-[#f2f0f1] overflow-hidden">
+      <div className="max-w-[1240px] mx-auto">
+        <div className="flex flex-col lg:flex-row">
+          {/* LEFT CONTENT */}
+          <div className="w-full lg:w-1/2 px-5 sm:px-8 lg:px-0 pt-10 lg:pt-24">
+            <h1 className="font-integral text-[36px] leading-[34px] sm:text-[48px] sm:leading-[48px] lg:text-[64px] lg:leading-[64px] font-bold text-black max-w-[580px]">
               FIND CLOTHES THAT MATCHES YOUR STYLE
             </h1>
 
-            {/* Description */}
-            <p className="text-base font-normal leading-[22px] text-left text-text-muted font-satoshi w-full lg:w-[86%] mt-[32px]">
+            <p className="mt-5 text-[14px] leading-[20px] lg:text-base lg:leading-[22px] text-[#666666] max-w-[545px]">
               Browse through our diverse range of meticulously crafted garments,
               designed to bring out your individuality and cater to your sense
               of style.
             </p>
 
-            {/* Shop Now Button */}
-            <div className="mt-[32px]">
+            <div className="mt-6">
               <Button
                 text="Shop Now"
                 text_font_size="text-base"
@@ -39,60 +30,83 @@ const HeroSection = () => {
                 text_font_weight="font-medium"
                 text_line_height="leading-[22px]"
                 text_color="text-white"
-                fill_background_color="bg-[#000000]"
-                border_border_radius="rounded-[26px]"
-                className="py-4 px-16"
+                fill_background_color="bg-black"
+                border_border_radius="rounded-full"
+                className="w-full sm:w-auto px-20 py-4"
                 onClick={handleShopNow}
               />
             </div>
 
-            {/* Statistics */}
-            <div className="flex flex-col sm:flex-row gap-[32px] w-full lg:w-[calc(100%-26px)] mt-[48px]">
-              <div className="flex flex-col justify-start items-start w-auto">
-                <h3 className="text-[32px] sm:text-[40px] font-bold leading-[43px] sm:leading-[54px] text-left text-text-primary font-satoshi">
-                  200+
-                </h3>
-                <p className="text-base font-normal leading-[22px] text-left text-text-muted font-satoshi">
-                  International Brands
-                </p>
+            {/* MOBILE STATS */}
+            <div className="mt-8 lg:hidden">
+              <div className="grid grid-cols-2">
+                <div className="text-center border-r border-black/10">
+                  <h3 className="text-[28px] font-bold">200+</h3>
+                  <p className="text-[12px] text-[#666666]">
+                    International Brands
+                  </p>
+                </div>
+
+                <div className="text-center">
+                  <h3 className="text-[28px] font-bold">2,000+</h3>
+                  <p className="text-[12px] text-[#666666]">
+                    High-Quality Products
+                  </p>
+                </div>
               </div>
 
-              <div className="flex flex-col justify-start items-start w-auto">
-                <h3 className="text-[32px] sm:text-[40px] font-bold leading-[43px] sm:leading-[54px] text-left text-text-primary font-satoshi">
-                  2,000+
-                </h3>
-                <p className="text-base font-normal leading-[22px] text-left text-text-muted font-satoshi">
-                  High-Quality Products
-                </p>
+              <div className="mt-4 text-center">
+                <h3 className="text-[28px] font-bold">30,000+</h3>
+                <p className="text-[12px] text-[#666666]">Happy Customers</p>
+              </div>
+            </div>
+
+            {/* DESKTOP STATS */}
+            <div className="hidden lg:flex gap-10 mt-12">
+              <div>
+                <h3 className="text-[40px] font-bold">200+</h3>
+                <p className="text-[#666666]">International Brands</p>
               </div>
 
-              <div className="flex flex-col justify-start items-start w-auto lg:w-[170px]">
-                <h3 className="text-[32px] sm:text-[40px] font-bold leading-[43px] sm:leading-[54px] text-left text-text-primary font-satoshi">
-                  30,000+
-                </h3>
-                <p className="text-base font-normal leading-[22px] text-left text-text-muted font-satoshi">
-                  Happy Customers
-                </p>
+              <div className="border-l border-black/10 pl-10">
+                <h3 className="text-[40px] font-bold">2,000+</h3>
+                <p className="text-[#666666]">High-Quality Products</p>
+              </div>
+
+              <div className="border-l border-black/10 pl-10">
+                <h3 className="text-[40px] font-bold">30,000+</h3>
+                <p className="text-[#666666]">Happy Customers</p>
               </div>
             </div>
           </div>
 
-          {/* Right Decorative Elements */}
-          <div className="flex flex-col gap-[106px] justify-start items-start w-full lg:w-auto mt-[0px] lg:ml-auto">
-            <div className="w-[104px] h-[104px] rounded-[52px] self-end">
-              <img
-                src="/icons/star.svg"
-                alt="decorative image"
-                width={104}
-                height={104}
+          {/* RIGHT IMAGE */}
+          <div className="relative w-full lg:w-1/2 mt-8 lg:mt-0">
+            <div className="relative h-[450px] sm:h-[550px] lg:h-[700px]">
+              <Image
+                src="/images/heroImage.png"
+                alt="Fashion Models"
+                fill
+                priority
+                className="object-contain object-bottom"
               />
-            </div>
-            <div className="w-[56px] h-[56px] rounded-[28px] ml-[26px]">
-              <img
+
+              {/* Big Star */}
+              <Image
                 src="/icons/star.svg"
-                alt="decorative image"
-                width={56}
-                height={56}
+                alt=""
+                width={76}
+                height={76}
+                className="absolute top-12 right-6 lg:top-24 lg:right-10"
+              />
+
+              {/* Small Star */}
+              <Image
+                src="/icons/star.svg"
+                alt=""
+                width={34}
+                height={34}
+                className="absolute top-40 left-5 lg:top-80 lg:left-10"
               />
             </div>
           </div>

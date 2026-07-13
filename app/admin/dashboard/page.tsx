@@ -214,7 +214,7 @@ export default function AdminDashboardPage() {
           <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid #e8e8e8', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase' }}>Recent Orders</span>
             <span
-              onClick={() => router.push('/admin/orders')}
+              onClick={() => router.push('/admin/dashboard/orders')}
               style={{ fontSize: 11, color: '#888', cursor: 'pointer', fontWeight: 500 }}
             >
               View all →
@@ -224,8 +224,7 @@ export default function AdminDashboardPage() {
             {stats?.recentOrders.map((order) => (
               <div
                 key={order.id}
-                onClick={() => router.push(`/admin/orders/${order.id}`)}
-                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #f0f0f0', cursor: 'pointer' }}
+                style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px 0', borderBottom: '1px solid #f0f0f0'}}
               >
                 <div>
                   <div style={{ fontSize: 12, fontWeight: 700, color: '#000' }}>{order.order_number}</div>

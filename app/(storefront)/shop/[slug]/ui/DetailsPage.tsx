@@ -26,6 +26,7 @@ export interface Product {
   reviewCount: number;
   material: string;
   isCustomizable: boolean;
+  isCustomizableWithImage: boolean; // true when product has "custom" tag
   images: { id: number; src: string }[];
   sizes: Size[];
   colors: { id: number; name: string; hex: string }[];

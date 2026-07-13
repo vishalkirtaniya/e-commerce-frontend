@@ -18,14 +18,13 @@ export default function ProductTabs({
   const [visibleReviews, setVisibleReviews] = useState(2);
 
   return (
-    <section className="mt-16">
-      {/* Tabs */}
-      <div className="flex border-b mb-6">
+    <section className="mt-12 lg:mt-16">
+      <div className="flex overflow-x-auto border-b mb-6 scrollbar-hide">
         {["details", "reviews", "faq"].map((tab) => (
           <button
             key={tab}
             onClick={() => setActiveTab(tab as Tab)}
-            className={`flex-1 py-3 text-center capitalize ${
+            className={`flex-1 min-w-[120px] py-3 text-center capitalize ${
               activeTab === tab
                 ? "border-b-2 border-black font-medium"
                 : "text-gray-400"
@@ -36,31 +35,19 @@ export default function ProductTabs({
         ))}
       </div>
 
-      {/* Content */}
       {activeTab === "details" && (
-        <p className="text-gray-600 max-w-3xl">
-          {description}
-        </p>
+        <p className="text-gray-600 max-w-3xl">{description}</p>
       )}
 
       {activeTab === "reviews" && (
         <>
-          <div className="grid md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {reviews.slice(0, visibleReviews).map((review) => (
-              <div
-                key={review.id}
-                className="border rounded-xl p-6"
-              >
+              <div key={review.id} className="border rounded-xl p-6">
                 <RatingBar rating={review.rating} />
-                <h4 className="font-semibold mt-2">
-                  {review.name}
-                </h4>
-                <p className="text-gray-500 mt-2">
-                  “{review.comment}”
-                </p>
-                <p className="text-sm text-gray-400 mt-2">
-                  {review.date}
-                </p>
+                <h4 className="font-semibold mt-2">{review.name}</h4>
+                <p className="text-gray-500 mt-2">“{review.comment}”</p>
+                <p className="text-sm text-gray-400 mt-2">{review.date}</p>
               </div>
             ))}
           </div>
@@ -69,9 +56,7 @@ export default function ProductTabs({
             <div className="mt-6 text-center">
               <Button
                 text="Load More Reviews"
-                onClick={() =>
-                  setVisibleReviews((v) => v + 2)
-                }
+                onClick={() => setVisibleReviews((v) => v + 2)}
               />
             </div>
           )}
@@ -79,9 +64,7 @@ export default function ProductTabs({
       )}
 
       {activeTab === "faq" && (
-        <p className="text-gray-600">
-          No FAQs available for this product yet.
-        </p>
+        <p className="text-gray-600">No FAQs available for this product yet.</p>
       )}
     </section>
   );

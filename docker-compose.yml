@@ -1,0 +1,32 @@
+version: "3.9"
+
+# =============================================================
+# frontend/docker-compose.yml
+# Run: docker compose -f frontend-compose.yml up --build
+# Reads secrets from: e-commerce-frontend/.env
+#
+# NOTE: NEXT_PUBLIC_* vars must be passed as build args
+# because Next.js bakes them into the JS bundle at build time.
+# They are read from e-commerce-frontend/.env via ${VAR} below.
+# =============================================================
+
+services:
+  frontend:
+    build:
+      context: ./
+      dockerfile: frontend.Dockerfile
+      target: runner
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL}
+    container_name: ecom_frontend
+    restart: unless-stopped
+    env_file:
+      - ./.env
+    ports:
+      - "3050:3000"
+    networks:
+      - ecom_network
+
+networks:
+  ecom_network:
+    driver: bridge

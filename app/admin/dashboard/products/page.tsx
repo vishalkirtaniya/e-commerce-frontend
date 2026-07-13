@@ -39,6 +39,7 @@ interface Product {
   is_new_arrival: boolean;
   is_top_selling: boolean;
   is_customizable: boolean;
+  is_customizable_with_image: boolean;
   is_sold_out: boolean;
   created_at: string;
   categories?: { id: number; name: string; slug: string };
@@ -585,6 +586,7 @@ interface FormState {
   is_new_arrival: boolean;
   is_top_selling: boolean;
   is_customizable: boolean;
+  is_customizable_with_image: boolean;
   is_sold_out: boolean;
   sizes: { label: string; price: string }[];
 }
@@ -603,6 +605,7 @@ function emptyForm(): FormState {
     is_new_arrival: false,
     is_top_selling: false,
     is_customizable: true,
+    is_customizable_with_image: false,
     is_sold_out: false,
     sizes: [],
   };
@@ -622,6 +625,7 @@ function productToForm(p: Product): FormState {
     is_new_arrival: p.is_new_arrival,
     is_top_selling: p.is_top_selling,
     is_customizable: p.is_customizable,
+    is_customizable_with_image: p.is_customizable_with_image,
     is_sold_out: p.is_sold_out,
     sizes:
       p.product_sizes?.map((s) => ({
@@ -795,6 +799,7 @@ export default function AdminProductsPage() {
         is_new_arrival: form.is_new_arrival,
         is_top_selling: form.is_top_selling,
         is_customizable: form.is_customizable,
+        is_customizable_with_image: form.is_customizable_with_image,
         is_sold_out: form.is_sold_out,
         sizes: form.sizes
           .filter((s) => s.label.trim() && s.price)
@@ -1331,6 +1336,11 @@ export default function AdminProductsPage() {
             sub: "Customers can add custom text, name, or notes",
           },
           {
+            key: "is_customizable_with_image",
+            label: "Allow Custom Image Upload",
+            sub: "Customers can upload a personal photo or image for this product",
+          },
+          {
             key: "is_sold_out",
             label: "Sold Out",
             sub: "Product shows as unavailable — cannot be added to cart",
@@ -1738,343 +1748,6 @@ export default function AdminProductsPage() {
   }
 
   const tabs = drawerMode === "edit" ? TABS_EDIT : TABS_ADD;
-
-  // ── Info Tab ─────────────────────────────────────────────────
-  // const InfoTab = (
-  //   <div>
-  //     <div style={S.sectionHead}>Basic Info</div>
-  //     <div style={S.field}>
-  //       <label style={S.label}>Product Name</label>
-  //       <input
-  //         style={S.input}
-  //         value={form.name}
-  //         onChange={(e) => setField("name", e.target.value)}
-  //         placeholder="e.g. Classic Fit T-Shirt"
-  //       />
-  //     </div>
-  //     <div style={{ ...S.grid2, marginBottom: 14 }}>
-  //       <div style={S.field}>
-  //         <label style={S.label}>SKU</label>
-  //         <input
-  //           style={S.input}
-  //           value={form.sku}
-  //           onChange={(e) => setField("sku", e.target.value)}
-  //           placeholder="TSH-001"
-  //         />
-  //       </div>
-  //       <div style={S.field}>
-  //         <label style={S.label}>Slug</label>
-  //         <input
-  //           style={S.input}
-  //           value={form.slug}
-  //           onChange={(e) => setField("slug", e.target.value)}
-  //           placeholder="classic-fit-t-shirt"
-  //         />
-  //       </div>
-  //     </div>
-  //     <div style={S.field}>
-  //       <label style={S.label}>Description</label>
-  //       <textarea
-  //         style={S.textarea}
-  //         value={form.description}
-  //         onChange={(e) => setField("description", e.target.value)}
-  //         placeholder="Product description..."
-  //       />
-  //     </div>
-  //     <div style={S.grid2}>
-  //       <div style={S.field}>
-  //         <label style={S.label}>Category</label>
-  //         <select
-  //           style={{ ...S.input }}
-  //           value={form.category_id}
-  //           onChange={(e) => setField("category_id", e.target.value)}
-  //         >
-  //           {categories.map((c) => (
-  //             <option key={c.id} value={c.id}>
-  //               {c.name}
-  //             </option>
-  //           ))}
-  //         </select>
-  //       </div>
-  //       <div style={S.field}>
-  //         <label style={S.label}>Material</label>
-  //         <select
-  //           style={{ ...S.input }}
-  //           value={form.material}
-  //           onChange={(e) => setField("material", e.target.value)}
-  //         >
-  //           {materials.map((m) => (
-  //             <option key={m} value={m}>
-  //               {m}
-  //             </option>
-  //           ))}
-  //         </select>
-  //       </div>
-  //     </div>
-
-  //     {/* ── Image upload — add mode only ── */}
-  // {drawerMode === "add" && (
-  //   <>
-  //     <div style={S.sectionHead}>Product Images</div>
-  //     <div
-  //       onDrop={(e) => {
-  //         e.preventDefault();
-  //         const files = Array.from(e.dataTransfer.files).filter((f) =>
-  //           ["image/jpeg", "image/png", "image/webp"].includes(f.type),
-  //         );
-  //         setPendingImages((prev) => [...prev, ...files]);
-  //       }}
-  //       onDragOver={(e) => e.preventDefault()}
-  //       onClick={() => document.getElementById("add-image-input")?.click()}
-  //       style={{
-  //         border: "2px dashed #e8e8e8",
-  //         padding: "1.5rem",
-  //         textAlign: "center",
-  //         cursor: "pointer",
-  //       }}
-  //     >
-  //       <div style={{ fontSize: 24, marginBottom: 6 }}>⬆</div>
-  //       <div style={{ fontSize: 13, fontWeight: 600, color: "#000" }}>
-  //         Click or drag to add images
-  //       </div>
-  //       <div style={{ fontSize: 11, color: "#888", marginTop: 4 }}>
-  //         JPEG, PNG, WEBP · Auto-compressed to WebP on upload
-  //       </div>
-  //       <input
-  //         id="add-image-input"
-  //         type="file"
-  //         accept="image/jpeg,image/png,image/webp"
-  //         multiple
-  //         style={{ display: "none" }}
-  //         onChange={(e) => {
-  //           if (!e.target.files) return;
-  //           const files = Array.from(e.target.files);
-  //           setPendingImages((prev) => [...prev, ...files]);
-  //           e.target.value = "";
-  //         }}
-  //       />
-  //     </div>
-
-  //     {/* Preview pending images */}
-  //     {pendingImages.length > 0 && (
-  //       <div style={{ marginTop: 12 }}>
-  //         <div style={{ fontSize: 11, color: "#888", marginBottom: 8 }}>
-  //           {pendingImages.length} image
-  //           {pendingImages.length > 1 ? "s" : ""} ready to upload
-  //         </div>
-  //         <div
-  //           style={{
-  //             display: "grid",
-  //             gridTemplateColumns: "repeat(5,1fr)",
-  //             gap: 6,
-  //           }}
-  //         >
-  //           {pendingImages.map((file, i) => (
-  //             <div
-  //               key={i}
-  //               style={{
-  //                 position: "relative",
-  //                 aspectRatio: "1",
-  //                 background: "#f5f5f5",
-  //                 border: "1px solid #e8e8e8",
-  //                 overflow: "hidden",
-  //               }}
-  //             >
-  //               <img
-  //                 src={URL.createObjectURL(file)}
-  //                 alt={file.name}
-  //                 style={{
-  //                   width: "100%",
-  //                   height: "100%",
-  //                   objectFit: "cover",
-  //                 }}
-  //               />
-  //               {i === 0 && (
-  //                 <div
-  //                   style={{
-  //                     position: "absolute",
-  //                     bottom: 0,
-  //                     left: 0,
-  //                     right: 0,
-  //                     background: "#000",
-  //                     color: "#fff",
-  //                     fontSize: 9,
-  //                     fontWeight: 700,
-  //                     textTransform: "uppercase",
-  //                     letterSpacing: 0.5,
-  //                     padding: "2px 4px",
-  //                     textAlign: "center",
-  //                   }}
-  //                 >
-  //                   Primary
-  //                 </div>
-  //               )}
-  //               <div
-  //                 onClick={(e) => {
-  //                   e.stopPropagation();
-  //                   setPendingImages((prev) =>
-  //                     prev.filter((_, idx) => idx !== i),
-  //                   );
-  //                 }}
-  //                 style={{
-  //                   position: "absolute",
-  //                   top: 3,
-  //                   right: 3,
-  //                   background: "#000",
-  //                   color: "#fff",
-  //                   fontSize: 10,
-  //                   width: 16,
-  //                   height: 16,
-  //                   display: "flex",
-  //                   alignItems: "center",
-  //                   justifyContent: "center",
-  //                   cursor: "pointer",
-  //                 }}
-  //               >
-  //                 ×
-  //               </div>
-  //             </div>
-  //           ))}
-  //         </div>
-  //         <div style={{ fontSize: 11, color: "#888", marginTop: 6 }}>
-  //           First image will be set as primary. Images are uploaded after
-  //           product is created.
-  //         </div>
-  //       </div>
-  //     )}
-  //   </>
-  // )}
-  //   </div>
-  // );
-
-  // // ── Pricing Tab ───────────────────────────────────────────────
-  // const PricingTab = (
-  //   <div>
-  //     <div style={S.sectionHead}>Pricing</div>
-  //     <div style={{ ...S.grid3, marginBottom: 14 }}>
-  //       <div style={S.field}>
-  //         <label style={S.label}>Price (₹)</label>
-  //         <input
-  //           style={S.input}
-  //           type="number"
-  //           value={form.price}
-  //           onChange={(e) => setField("price", e.target.value)}
-  //           placeholder="799"
-  //         />
-  //       </div>
-  //       <div style={S.field}>
-  //         <label style={S.label}>Original (₹)</label>
-  //         <input
-  //           style={S.input}
-  //           type="number"
-  //           value={form.original_price}
-  //           onChange={(e) => setField("original_price", e.target.value)}
-  //           placeholder="999"
-  //         />
-  //       </div>
-  //       <div style={S.field}>
-  //         <label style={S.label}>Discount (%)</label>
-  //         <input
-  //           style={S.input}
-  //           type="number"
-  //           value={form.discount}
-  //           onChange={(e) => setField("discount", e.target.value)}
-  //           placeholder="20"
-  //         />
-  //       </div>
-  //     </div>
-  //     <div style={S.sectionHead}>Sizes</div>
-  //     {form.sizes.map((s, i) => (
-  //       <div
-  //         key={i}
-  //         style={{
-  //           display: "flex",
-  //           gap: 8,
-  //           alignItems: "center",
-  //           marginBottom: 8,
-  //         }}
-  //       >
-  //         <input
-  //           style={{ ...S.input, flex: 1 }}
-  //           value={s.label}
-  //           onChange={(e) => updateSize(i, "label", e.target.value)}
-  //           placeholder="Label e.g. S"
-  //         />
-  //         <input
-  //           style={{ ...S.input, flex: 1 }}
-  //           type="number"
-  //           value={s.price}
-  //           onChange={(e) => updateSize(i, "price", e.target.value)}
-  //           placeholder="Price ₹"
-  //         />
-  //         <button
-  //           onClick={() => removeSize(i)}
-  //           style={{
-  //             background: "none",
-  //             border: "none",
-  //             color: "#c0392b",
-  //             fontSize: 18,
-  //             cursor: "pointer",
-  //             padding: "0 4px",
-  //             lineHeight: 1,
-  //           }}
-  //         >
-  //           ×
-  //         </button>
-  //       </div>
-  //     ))}
-  //     <button
-  //       onClick={addSize}
-  //       style={{
-  //         fontSize: 11,
-  //         fontWeight: 600,
-  //         textTransform: "uppercase" as const,
-  //         letterSpacing: 0.5,
-  //         color: "#000",
-  //         background: "none",
-  //         border: "1px solid #e8e8e8",
-  //         padding: "6px 12px",
-  //         cursor: "pointer",
-  //         marginTop: 4,
-  //       }}
-  //     >
-  //       + Add Size
-  //     </button>
-  //   </div>
-  // );
-
-  // // ── Flags Tab ─────────────────────────────────────────────────
-  // const FlagsTab = (
-  //   <div>
-  //     <div style={S.sectionHead}>Product Flags</div>
-  //     <ToggleRow
-  //       label="New Arrival"
-  //       sub="Show in new arrivals section on storefront"
-  //       value={form.is_new_arrival}
-  //       onChange={(v) => setField("is_new_arrival", v)}
-  //     />
-  //     <ToggleRow
-  //       label="Top Selling"
-  //       sub="Show in top selling section on storefront"
-  //       value={form.is_top_selling}
-  //       onChange={(v) => setField("is_top_selling", v)}
-  //     />
-  //     <ToggleRow
-  //       label="Customizable"
-  //       sub="Allow customers to add custom text or notes"
-  //       value={form.is_customizable}
-  //       onChange={(v) => setField("is_customizable", v)}
-  //     />
-  //     <ToggleRow
-  //       label="Sold Out"
-  //       sub="Mark as unavailable — customers cannot add to cart"
-  //       value={form.is_sold_out}
-  //       onChange={(v) => setField("is_sold_out", v)}
-  //     />
-  //   </div>
-  // );
-
-  // const TAB_CONTENT = [InfoTab, PricingTab, FlagsTab];
 
   return (
     <div style={S.page}>

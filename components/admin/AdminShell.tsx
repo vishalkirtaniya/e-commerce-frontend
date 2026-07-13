@@ -70,7 +70,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               marginBottom: 8,
             }}
           >
-            SHOP.CO
+            <h1 className="text-[12px] sm:text-[12px] lg:text-[16px] font-extrabold text-white font-integral_cf leading-none">
+              Santushti Collection
+              <span className="block">Trophy Craft</span>
+            </h1>
           </div>
           <div
             style={{
@@ -129,7 +132,10 @@ export function AdminShell({ children }: { children: React.ReactNode }) {
               letterSpacing: -0.5,
             }}
           >
-            SHOP.CO
+            <h1 className="text-[12px] sm:text-[12px] lg:text-[16px] font-extrabold text-white font-integral_cf leading-none">
+              Santushti Collection
+              <span className="block">Trophy Craft</span>
+            </h1>
           </div>
           <div
             style={{

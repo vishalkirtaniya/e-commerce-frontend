@@ -5,6 +5,7 @@ import FiltersSidebar from "@/components/FiltersSidebar";
 import ProductGrid from "@/components/ProductGrid";
 import BreadCrumb from "@/components/ui/BreadCrumb";
 import { API_URL } from "@/lib/api";
+import { ApiProduct } from "../page";
 
 // ── Types ─────────────────────────────────────────────────────
 export interface FilterOptions {
@@ -22,20 +23,6 @@ export interface ActiveFilters {
   max_price: number;
   sort_by: string;
   page: number;
-}
-
-export interface ApiProduct {
-  id: number;
-  slug: string;
-  name: string;
-  price: number;
-  original_price: number | null;
-  discount: number | null;
-  rating: number;
-  review_count: number;
-  material: string;
-  category_name: string;
-  image: string | null;
 }
 
 export interface PaginationMeta {
@@ -69,6 +56,7 @@ export default function ShopPage() {
   const [loadingFilters, setLoadingFilters] = useState(true);
   const [loadingProducts, setLoadingProducts] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showFilters, setShowFilters] = useState(false);
 
   // ── Fetch sidebar filter options once on mount ──────────────
   useEffect(() => {
@@ -167,17 +155,57 @@ export default function ShopPage() {
         </div>
       )}
 
-      <div className="grid grid-cols-12 gap-6">
-        {/* Filters sidebar */}
-        <aside className="col-span-12 md:col-span-3">
-          <FiltersSidebar
-            filterOptions={filterOptions}
-            activeFilters={filters}
-            loading={loadingFilters}
-            onFilterChange={handleFilterChange}
-            onReset={handleResetFilters}
-          />
-        </aside>
+      <div className="grid grid-cols-12 gap-4 lg:gap-6">
+        <>
+          {/* Desktop Sidebar */}
+          <aside className="hidden lg:block lg:col-span-3">
+            <FiltersSidebar
+              filterOptions={filterOptions}
+              activeFilters={filters}
+              loading={loadingFilters}
+              onFilterChange={handleFilterChange}
+              onReset={handleResetFilters}
+            />
+          </aside>
+
+          {/* Mobile Drawer */}
+          {showFilters && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 lg:hidden">
+              <div
+                className="
+        bg-white
+        w-[90%]
+        max-w-[400px]
+        max-h-[85vh]
+        overflow-y-auto
+        rounded-2xl
+        shadow-xl
+        p-5
+      "
+              >
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-semibold">Filters</h2>
+
+                  <button
+                    onClick={() => setShowFilters(false)}
+                    className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100"
+                  >
+                    ✕
+                  </button>
+                </div>
+
+                <FiltersSidebar
+                  filterOptions={filterOptions}
+                  activeFilters={filters}
+                  loading={loadingFilters}
+                  onFilterChange={handleFilterChange}
+                  onReset={handleResetFilters}
+                  onApply={() => setShowFilters(false)}
+                />
+              </div>
+            </div>
+          )}
+        </>
 
         {/* Product grid */}
         <section className="col-span-12 md:col-span-9">
@@ -188,6 +216,7 @@ export default function ShopPage() {
             sortBy={filters.sort_by}
             onSortChange={handleSortChange}
             onPageChange={handlePageChange}
+            onOpenFilters={() => setShowFilters(true)}
           />
         </section>
       </div>

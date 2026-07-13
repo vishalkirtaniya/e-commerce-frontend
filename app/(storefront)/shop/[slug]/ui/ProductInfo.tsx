@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import RatingBar from "@/components/ui/RatingBar";
@@ -27,6 +27,7 @@ interface Product {
   reviewCount: number;
   material: string;
   isCustomizable: boolean;
+  isCustomizableWithImage: boolean; // true when product has "custom" tag
   images: { id: number; src: string }[];
   sizes: Size[];
   colors: { id: number; name: string; hex: string }[];
@@ -41,7 +42,6 @@ function parseError(err: unknown): string {
   if (typeof err === "string") return err;
   if (err instanceof Error) return err.message;
   if (typeof err === "object" && err !== null) {
-    // Zod field errors shape: { field: ['message'] }
     const entries = Object.entries(err as Record<string, unknown>);
     if (entries.length > 0) {
       return entries
@@ -55,8 +55,13 @@ function parseError(err: unknown): string {
   return "Something went wrong";
 }
 
+// ── Allowed image types ────────────────────────────────────────
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"];
+const MAX_FILE_SIZE_MB = 5;
+
 export default function ProductInfo({ product }: Props) {
   const router = useRouter();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const defaultSize =
     product.sizes.find((s) => s.is_default) ?? product.sizes[0];
@@ -66,6 +71,11 @@ export default function ProductInfo({ product }: Props) {
   );
   const [quantity, setQuantity] = useState(1);
   const [customization, setCustomization] = useState("");
+  const [customImage, setCustomImage] = useState<File | null>(null);
+  const [customImagePreview, setCustomImagePreview] = useState<string | null>(
+    null,
+  );
+  const [imageError, setImageError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [cartMessage, setCartMessage] = useState<{
     type: "success" | "error";
@@ -78,6 +88,36 @@ export default function ProductInfo({ product }: Props) {
     setQuantity((prev) => Math.max(1, Math.min(10, prev + delta)));
   };
 
+  // ── Image upload handler ──────────────────────────────────────
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setImageError(null);
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      setImageError("Only JPG, PNG, or WEBP images are allowed.");
+      return;
+    }
+
+    if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+      setImageError(`Image must be smaller than ${MAX_FILE_SIZE_MB}MB.`);
+      return;
+    }
+
+    setCustomImage(file);
+    setCustomImagePreview(URL.createObjectURL(file));
+  };
+
+  const handleRemoveImage = () => {
+    setCustomImage(null);
+    setCustomImagePreview(null);
+    setImageError(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  // ── Add to cart ───────────────────────────────────────────────
+  // If a custom image is attached, uploads it first via multipart/form-data.
+  // Otherwise sends a regular JSON request.
   const handleAddToCart = async () => {
     const token = localStorage.getItem("access_token");
     if (!token) {
@@ -89,20 +129,41 @@ export default function ProductInfo({ product }: Props) {
     setCartMessage(null);
 
     try {
-      const res = await fetch(`${API_URL}/api/cart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          product_id: product.id,
-          // Send undefined instead of null — cleaner for optional fields
-          product_size_id: selectedSize?.id ?? undefined,
-          quantity,
-          customization: customization.trim() || undefined,
-        }),
-      });
+      let res: Response;
+
+      if (product.isCustomizableWithImage && customImage) {
+        // ── Multipart upload when image is attached ───────────
+        const formData = new FormData();
+        formData.append("product_id", String(product.id));
+        if (selectedSize?.id)
+          formData.append("product_size_id", String(selectedSize.id));
+        formData.append("quantity", String(quantity));
+        if (customization.trim())
+          formData.append("customization", customization.trim());
+        formData.append("custom_image", customImage);
+
+        res = await fetch(`${API_URL}/api/cart`, {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+          // Don't set Content-Type — browser sets it with the correct boundary
+          body: formData,
+        });
+      } else {
+        // ── Standard JSON when no image ───────────────────────
+        res = await fetch(`${API_URL}/api/cart`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            product_id: product.id,
+            product_size_id: selectedSize?.id ?? undefined,
+            quantity,
+            customization: customization.trim() || undefined,
+          }),
+        });
+      }
 
       if (res.status === 401) {
         router.push("/signin");
@@ -112,7 +173,6 @@ export default function ProductInfo({ product }: Props) {
       const data = await res.json();
 
       if (!res.ok) {
-        // data.error may be a string or a Zod field-error object
         const message =
           typeof data.error === "string" ? data.error : parseError(data.error);
         throw new Error(message);
@@ -138,7 +198,7 @@ export default function ProductInfo({ product }: Props) {
   return (
     <div className="w-full">
       {/* Title */}
-      <h1 className="text-[28px] sm:text-[32px] md:text-[40px] font-bold leading-[34px] sm:leading-[40px] md:leading-[48px] text-text-primary font-integral mb-4">
+      <h1 className="text-[32px] lg:text-[40px] font-bold leading-[34px] sm:leading-[40px] md:leading-[48px] text-text-primary font-integral mb-4">
         {product.name}
       </h1>
 
@@ -230,25 +290,121 @@ export default function ProductInfo({ product }: Props) {
         </>
       )}
 
-      {/* Customization */}
+      {/* Customization section */}
       {product.isCustomizable && (
         <>
-          <div className="mb-6">
-            <p className="text-base font-normal leading-[22px] text-text-muted font-satoshi mb-2">
-              Customization Details
-              <span className="text-xs text-gray-400 ml-1">(optional)</span>
-            </p>
-            <textarea
-              value={customization}
-              onChange={(e) => setCustomization(e.target.value)}
-              placeholder="e.g. Name: Rahul & Priya, Date: 22-06-2024, Photo: will upload separately"
-              rows={3}
-              maxLength={500}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-black transition resize-none"
-            />
-            <p className="text-xs text-gray-400 mt-1 text-right">
-              {customization.length}/500
-            </p>
+          <div className="mb-6 space-y-4">
+            {/* Text customization */}
+            <div>
+              <p className="text-base font-normal leading-[22px] text-text-muted font-satoshi mb-2">
+                Customization Details
+                <span className="text-xs text-gray-400 ml-1">(optional)</span>
+              </p>
+              <textarea
+                value={customization}
+                onChange={(e) => setCustomization(e.target.value)}
+                placeholder="e.g. Name: Rahul & Priya, Date: 22-06-2024, Photo: will upload separately"
+                rows={3}
+                maxLength={500}
+                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 outline-none focus:border-black transition resize-none"
+              />
+              <p className="text-xs text-gray-400 mt-1 text-right">
+                {customization.length}/500
+              </p>
+            </div>
+
+            {/* Image upload — only shown when product has "custom" tag */}
+            {product.isCustomizableWithImage && (
+              <div>
+                <p className="text-base font-normal leading-[22px] text-text-muted font-satoshi mb-2">
+                  Upload Your Image
+                  <span className="text-xs text-gray-400 ml-1">
+                    (optional · JPG, PNG, WEBP · max 5MB)
+                  </span>
+                </p>
+
+                {/* Preview or drop zone */}
+                {customImagePreview ? (
+                  <div className="relative w-full rounded-xl overflow-hidden border border-gray-200 bg-gray-50">
+                    <img
+                      src={customImagePreview}
+                      alt="Custom image preview"
+                      className="w-full max-h-[200px] object-contain py-3"
+                    />
+                    {/* Remove button */}
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="absolute top-2 right-2 bg-black text-white rounded-full w-7 h-7 flex items-center justify-center hover:opacity-70 transition"
+                      aria-label="Remove image"
+                    >
+                      <svg
+                        width="12"
+                        height="12"
+                        viewBox="0 0 12 12"
+                        fill="none"
+                      >
+                        <path
+                          d="M1 1L11 11M11 1L1 11"
+                          stroke="white"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    </button>
+                    <p className="text-xs text-gray-400 text-center pb-2">
+                      {customImage?.name}
+                    </p>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="w-full border-2 border-dashed border-gray-200 rounded-xl px-4 py-8 flex flex-col items-center gap-2 hover:border-black transition group"
+                  >
+                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-black transition">
+                      <svg
+                        width="18"
+                        height="18"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className="text-gray-400 group-hover:text-white transition"
+                      >
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                        <polyline points="17 8 12 3 7 8" />
+                        <line x1="12" y1="3" x2="12" y2="15" />
+                      </svg>
+                    </div>
+                    <p className="text-sm text-gray-500 group-hover:text-black transition font-satoshi">
+                      Click to upload your image
+                    </p>
+                    <p className="text-xs text-gray-400 font-satoshi">
+                      JPG, PNG, WEBP up to 5MB
+                    </p>
+                  </button>
+                )}
+
+                {/* Hidden file input */}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
+
+                {/* Image error */}
+                {imageError && (
+                  <p className="text-xs text-red-500 mt-2 font-satoshi">
+                    {imageError}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
           <div className="w-full h-[1px] bg-border-primary mb-6" />
         </>
@@ -265,17 +421,20 @@ export default function ProductInfo({ product }: Props) {
       )}
 
       {/* Quantity + Add to Cart + Buy Now */}
-      <div className="flex w-full flex-col sm:flex-row gap-4 sm:gap-5 items-stretch sm:items-center">
-        <div className="flex w-1/3 items-center justify-evenly bg-[#f0f0f0] rounded-[26px] px-1 py-3.5 sm:w-[30%]">
+      <div className="flex w-full gap-2 sm:gap-5 items-center">
+        {/* Quantity */}
+        <div className="flex min-w-[110px] items-center justify-evenly bg-[#f0f0f0] rounded-full py-3 px-1">
           <button
             onClick={() => handleQuantityChange(-1)}
             className="w-6 h-6 flex items-center justify-center hover:bg-white transition rounded-full"
           >
             <Image src="/icons/minus.svg" alt="-" width={12} height={12} />
           </button>
+
           <span className="text-base font-medium text-text-primary font-satoshi">
             {quantity}
           </span>
+
           <button
             onClick={() => handleQuantityChange(1)}
             className="w-6 h-6 flex items-center justify-center hover:bg-white transition rounded-full"
@@ -284,26 +443,28 @@ export default function ProductInfo({ product }: Props) {
           </button>
         </div>
 
+        {/* Add To Cart */}
         <Button
           text={loading ? "Adding..." : "Add to Cart"}
-          text_font_size="text-base"
+          text_font_size="text-sm sm:text-base"
           text_font_weight="font-medium"
           text_color="text-[#ffffff]"
           fill_background_color="bg-[#000000]"
           border_border_radius="rounded-full"
           onClick={handleAddToCart}
-          className="w-1/3 sm:flex-1 px-2 py-3.5 disabled:opacity-60"
+          className="flex-1 py-3 px-2 disabled:opacity-60"
         />
 
+        {/* Buy Now */}
         <Button
           text="Buy Now"
-          text_font_size="text-base"
+          text_font_size="text-sm sm:text-base"
           text_font_weight="font-medium"
           text_color="text-[#ffffff]"
           fill_background_color="bg-[#000000]"
           border_border_radius="rounded-full"
           onClick={handleBuyNow}
-          className="w-1/3 sm:flex-1 px-2 py-3.5"
+          className="flex-1 py-3 px-2"
         />
       </div>
     </div>

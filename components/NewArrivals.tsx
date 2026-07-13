@@ -1,4 +1,5 @@
 "use client";
+
 import Button from "@/components/ui/Button";
 import RatingBar from "@/components/ui/RatingBar";
 
@@ -19,92 +20,121 @@ interface NewArrivalsProps {
 
 const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
   const handleViewAll = (): void => {
-    // Navigate to all products page
+    console.log("View All");
   };
 
   const handleProductClick = (productId: number): void => {
-    // Navigate to product detail page
+    console.log(productId);
   };
 
   return (
-    <section className="w-full bg-secondary-background mt-[96px] px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-[1240px] mx-auto py-[62px]">
-        <div className="flex flex-col gap-[32px] justify-start items-center">
+    <section className="w-full mt-12 lg:mt-24 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1240px] mx-auto py-10 lg:py-16">
+        <div className="flex flex-col items-center">
           {/* Section Title */}
-          <h2 className="text-[36px] sm:text-[48px] font-bold leading-[41px] sm:leading-[55px] text-center text-text-primary font-aclonica">
+          <h2 className="font-integral text-[32px] leading-[36px] lg:text-[48px] lg:leading-[58px] font-bold text-center text-black">
             NEW ARRIVALS
           </h2>
 
-          {/* Products Grid */}
+          {/* Products */}
           {loading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[20px] w-full">
+            <div className="flex overflow-hidden gap-4 w-full mt-10">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="flex flex-col gap-[16px]">
-                  <div className="w-full h-[298px] bg-secondary-dark rounded-[20px] animate-pulse"></div>
-                  <div className="flex flex-col gap-[8px]">
-                    <div className="h-[20px] bg-secondary-dark rounded animate-pulse"></div>
-                    <div className="h-[16px] bg-secondary-dark rounded animate-pulse w-2/3"></div>
-                    <div className="h-[24px] bg-secondary-dark rounded animate-pulse w-1/2"></div>
+                <div
+                  key={i}
+                  className="flex-shrink-0 w-[190px] lg:w-auto flex flex-col gap-4"
+                >
+                  <div className="h-[200px] lg:h-[298px] rounded-[20px] bg-gray-200 animate-pulse" />
+
+                  <div className="space-y-2">
+                    <div className="h-5 rounded bg-gray-200 animate-pulse" />
+                    <div className="h-4 w-2/3 rounded bg-gray-200 animate-pulse" />
+                    <div className="h-6 w-1/2 rounded bg-gray-200 animate-pulse" />
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-[20px] w-full">
+            <div
+              className="
+                flex
+                overflow-x-auto
+                gap-4
+                w-full
+                mt-10
+                pb-2
+                scrollbar-hide
+
+                lg:grid
+                lg:grid-cols-4
+                lg:gap-5
+              "
+            >
               {products.map((product) => (
                 <div
                   key={product.id}
-                  className="flex flex-col gap-[16px] cursor-pointer group"
                   onClick={() => handleProductClick(product.id)}
+                  className="
+                    flex-shrink-0
+                    w-[170px]
+                    sm:w-[190px]
+                    lg:w-auto
+                    flex
+                    flex-col
+                    gap-4
+                    cursor-pointer
+                    group
+                  "
                 >
                   {/* Product Image */}
-                  <div className="relative w-full bg-secondary-dark rounded-[20px] overflow-hidden group-hover:shadow-lg transition-shadow duration-300">
+                  <div className="overflow-hidden rounded-[20px] bg-[#f0f0f0]">
                     <img
                       src={product.image}
                       alt={product.name}
-                      className="w-full h-[250px] sm:h-[298px] object-cover rounded-[20px] group-hover:scale-105 transition-transform duration-300"
+                      className="
+                        w-full
+                        h-[200px]
+                        lg:h-[298px]
+                        object-cover
+                        group-hover:scale-105
+                        transition-transform
+                        duration-300
+                      "
                     />
                   </div>
 
                   {/* Product Details */}
-                  <div className="flex flex-col gap-[6px] justify-start items-start">
-                    {/* Product Name */}
-                    <h3 className="text-lg sm:text-[20px] font-bold leading-[24px] sm:leading-[27px] text-left text-text-primary font-satoshi capitalize">
+                  <div className="flex flex-col gap-1">
+                    {/* Name */}
+                    <h3 className="text-[16px] lg:text-[20px] font-bold text-black leading-tight">
                       {product.name}
                     </h3>
 
                     {/* Rating */}
-                    <div className="flex items-center gap-[12px]">
+                    <div className="flex items-center gap-2">
                       <RatingBar rating={product.rating} readonly />
-                      <span className="text-sm font-normal leading-[19px] text-text-primary font-satoshi">
+
+                      <span className="text-[12px] lg:text-[14px]">
                         {product.rating}/5
                       </span>
                     </div>
 
                     {/* Price */}
-                    <div className="flex items-center gap-[10px]">
-                      <span className="text-xl sm:text-[24px] font-bold leading-[27px] sm:leading-[33px] text-text-primary font-satoshi">
+                    <div className="flex items-center flex-wrap gap-2">
+                      <span className="text-[24px] font-bold text-black">
                         {product.price}
                       </span>
+
                       {product.originalPrice && (
-                        <>
-                          <span className="text-xl sm:text-[24px] font-bold leading-[27px] sm:leading-[33px] text-text-secondary line-through font-satoshi">
-                            {product.originalPrice}
-                          </span>
-                          {product.discount && (
-                            <Button
-                              text={product.discount}
-                              text_font_size="text-xs"
-                              text_font_family="Satoshi"
-                              text_font_weight="font-medium"
-                              text_line_height="leading-tight"
-                              text_color="text-accent-color"
-                              fill_background_color="bg-accent-light"
-                              border_border_radius="rounded-sm"
-                              padding="py-[4px] px-[12px]"
-                            />
-                          )}
-                        </>
+                        <span className="text-[24px] font-bold text-gray-400 line-through">
+                          {product.originalPrice}
+                        </span>
+                      )}
+
+                      {product.discount && (
+                        <span className="px-3 py-1 rounded-full text-[12px] font-medium bg-red-100 text-red-500">
+                          {product.discount}
+                        </span>
                       )}
                     </div>
                   </div>
@@ -114,23 +144,25 @@ const NewArrivals = ({ products, loading }: NewArrivalsProps) => {
           )}
 
           {/* View All Button */}
-          <Button
-            text="View All"
-            text_font_size="text-base"
-            text_font_family="Satoshi"
-            text_font_weight="font-medium"
-            text_line_height="leading-[22px]"
-            text_color="text-text-primary"
-            fill_background_color="bg-transparent"
-            border_border="border border-border-primary"
-            border_border_radius="rounded-[26px]"
-            className="px-5 py-1"
-            onClick={handleViewAll}
-          />
+          <div className="w-full flex justify-center mt-10">
+            <Button
+              text="View All"
+              text_font_size="text-base"
+              text_font_family="Satoshi"
+              text_font_weight="font-medium"
+              text_line_height="leading-[22px]"
+              text_color="text-black"
+              fill_background_color="bg-transparent"
+              border_border="border border-[#e5e5e5]"
+              border_border_radius="rounded-full"
+              className="w-full sm:w-auto min-w-[220px] py-3 px-6"
+              onClick={handleViewAll}
+            />
+          </div>
         </div>
 
-        {/* Divider Line */}
-        <div className="w-full h-[1px] bg-border-primary mt-[64px]"></div>
+        {/* Divider */}
+        <div className="w-full h-[1px] bg-[#e5e5e5] mt-12 lg:mt-16" />
       </div>
     </section>
   );

@@ -13,15 +13,15 @@ export const product: Product = {
 
   images: [
     {
-      id: "img-1",
+      id: 1,
       src: "/images/detail_img_1.png",
     },
     {
-      id: "img-2",
+      id: 2,
       src: "/images/detail_img_5.png",
     },
     {
-      id: "img-3",
+      id: 3,
       src: "/images/detail_img_6.png",
     },
   ],
@@ -49,7 +49,7 @@ export const product: Product = {
 
 export const reviews: Review[] = [
   {
-    id: "1",
+    id: 1,
     name: "Samantha D.",
     rating: 5,
     comment: "Absolutely love this t-shirt!",
@@ -57,7 +57,7 @@ export const reviews: Review[] = [
     verified: true,
   },
   {
-    id: "2",
+    id: 2,
     name: "Alex M.",
     rating: 4,
     comment: "Great quality and very comfortable.",
@@ -68,7 +68,7 @@ export const reviews: Review[] = [
 
 export const relatedProducts: RelatedProduct[] = [
   {
-    id: "1",
+    id: 1,
     slug: "polo-contrast-trim",
     name: "Polo with Contrast Trims",
     price: 212,
@@ -78,7 +78,7 @@ export const relatedProducts: RelatedProduct[] = [
     image: "/images/image_7.png",
   },
   {
-    id: "2",
+    id: 2,
     slug: "gradient-graphic-tshirt",
     name: "Gradient Graphic T-shirt",
     price: 145,

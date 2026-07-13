@@ -14,37 +14,6 @@ interface Suggestion {
   price: number;
 }
 
-// ── Search icon ───────────────────────────────────────────────
-function SearchIcon({ loading }: { loading: boolean }) {
-  if (loading) {
-    return (
-      <div
-        style={{
-          width: 16,
-          height: 16,
-          border: "2px solid rgba(0,0,0,0.15)",
-          borderTopColor: "#000",
-          borderRadius: "50%",
-          animation: "spin 0.7s linear infinite",
-        }}
-      />
-    );
-  }
-  return (
-    <svg
-      width="16"
-      height="16"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      viewBox="0 0 24 24"
-    >
-      <circle cx="11" cy="11" r="8" />
-      <path d="m21 21-4.35-4.35" />
-    </svg>
-  );
-}
-
 export default function SearchBar() {
   const router = useRouter();
   const [query, setQuery] = useState("");
@@ -85,7 +54,7 @@ export default function SearchBar() {
     return () => clearTimeout(debounceRef.current);
   }, [query, fetchSuggestions]);
 
-  // Close dropdown on outside click
+  // Close on outside click
   useEffect(() => {
     function onClickOutside(e: MouseEvent) {
       if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
@@ -121,26 +90,26 @@ export default function SearchBar() {
   // ── Render ────────────────────────────────────────────────
   return (
     <div ref={wrapRef} style={{ position: "relative", width: "100%" }}>
-      {/* Your existing SearchView component — unchanged */}
       <SearchView
         placeholder="Search for products..."
         text_font_size="text-base"
         text_font_family="Satoshi"
         text_font_weight="font-normal"
         text_line_height="leading-normal"
-        text_color="text-search-text"
-        fill_background_color="bg-[#f2f0f1]"
-        border_border_radius="rounded-lg"
-        className="rounded-full"
+        text_color="text-white" // ← was: text-search-text
+        fill_background_color="bg-white/10" // ← was: bg-[#f2f0f1]
+        border_border_radius="rounded-full"
+        className="rounded-full border border-white/15 focus-within:border-white/40 focus-within:bg-white/15 transition-all"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         onKeyDown={handleKeyDown}
         onFocus={() => suggestions.length > 0 && setOpen(true)}
         leftIcon={
+          // invert turns the black SVG white — same technique as cart/me icons
           <img
             src="/icons/magnifing_glass.svg"
             alt="search icon"
-            className="w-[24px] h-[20px]"
+            className="w-[24px] h-[20px] invert opacity-60" // ← added invert + opacity
           />
         }
         rightIcon={
@@ -149,8 +118,8 @@ export default function SearchBar() {
               style={{
                 width: 16,
                 height: 16,
-                border: "2px solid rgba(0,0,0,0.15)",
-                borderTopColor: "#000",
+                border: "2px solid rgba(255,255,255,0.2)", // ← was rgba(0,0,0,0.15)
+                borderTopColor: "#ffffff", // ← was #000
                 borderRadius: "50%",
                 animation: "spin 0.7s linear infinite",
               }}
@@ -159,19 +128,19 @@ export default function SearchBar() {
         }
       />
 
-      {/* Dropdown */}
+      {/* Dropdown — white card, unchanged */}
       {open && suggestions.length > 0 && (
         <div
           style={{
             position: "absolute",
-            top: "calc(100% + 4px)",
+            top: "calc(100% + 6px)",
             left: 0,
             right: 0,
             background: "#fff",
             border: "1px solid #e8e8e8",
-            boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+            boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
             zIndex: 999,
-            borderRadius: "20px",
+            borderRadius: 20,
             overflow: "hidden",
           }}
         >
@@ -194,7 +163,6 @@ export default function SearchBar() {
               }
               onMouseLeave={(e) => (e.currentTarget.style.background = "")}
             >
-              {/* Product image */}
               <div
                 style={{
                   width: 40,
@@ -202,6 +170,7 @@ export default function SearchBar() {
                   background: "#f5f5f5",
                   flexShrink: 0,
                   overflow: "hidden",
+                  borderRadius: 8,
                 }}
               >
                 {s.image_url ? (
@@ -230,7 +199,6 @@ export default function SearchBar() {
                 )}
               </div>
 
-              {/* Name + category */}
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div
                   style={{
@@ -257,7 +225,6 @@ export default function SearchBar() {
                 </div>
               </div>
 
-              {/* Price */}
               <div
                 style={{
                   fontSize: 13,
@@ -272,7 +239,7 @@ export default function SearchBar() {
             </div>
           ))}
 
-          {/* View all results */}
+          {/* View all */}
           <div
             onClick={() => handleSubmit()}
             style={{
@@ -301,11 +268,12 @@ export default function SearchBar() {
         <div
           style={{
             position: "absolute",
-            top: "calc(100% + 4px)",
+            top: "calc(100% + 6px)",
             left: 0,
             right: 0,
             background: "#fff",
             border: "1px solid #e8e8e8",
+            borderRadius: 20,
             padding: "14px 16px",
             fontSize: 13,
             color: "#888",

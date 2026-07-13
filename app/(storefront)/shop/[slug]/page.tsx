@@ -43,6 +43,7 @@ interface ApiProduct {
   rating: number;
   review_count: number;
   is_customizable: boolean;
+  is_customizable_with_image: boolean; // true when product has "custom" tag
   category_name: string;
   images: { url: string; is_primary: boolean; sort_order: number }[];
   sizes: ApiSize[];
@@ -65,6 +66,7 @@ function mapToProduct(p: ApiProduct) {
     reviewCount: p.review_count,
     material: p.material,
     isCustomizable: p.is_customizable,
+    isCustomizableWithImage: p.is_customizable_with_image, 
     images:
       p.images.length > 0
         ? p.images

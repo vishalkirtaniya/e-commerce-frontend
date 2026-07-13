@@ -1,16 +1,14 @@
 "use client";
-import { useState, useEffect } from "react";
-import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { useState, useEffect, useRef } from "react";
 import HeroSection from "@/components/HeroSection";
 import ProductCategories from "@/components/ProductCategories";
 import NewArrivals from "@/components/NewArrivals";
 import TopSelling from "@/components/TopSelling";
 import CustomerReviews from "@/components/CustomerReviews";
-import { API_URL } from "@/lib/api"; 
+import { API_URL } from "@/lib/api";
 
 // ── Types matching backend response shapes ─────────────────────
-interface ApiProduct {
+export interface ApiProduct {
   id: number;
   slug: string;
   name: string;
@@ -19,6 +17,7 @@ interface ApiProduct {
   discount: number | null;
   rating: number;
   image: string | null;
+  images: string[];
 }
 
 interface ApiReview {
@@ -81,12 +80,41 @@ export default function HomePage() {
 
   const [error, setError] = useState<string | null>(null);
 
+  // Tracks whether the scroll trigger has already fired this visit
+  const hasTriggered = useRef(false);
+
+  // ── Scroll trigger ─────────────────────────────────────────
+  useEffect(() => {
+    function handleMouseMove(e: MouseEvent) {
+      if (hasTriggered.current) return;
+      if (e.clientX >= window.innerWidth - 10) {
+        hasTriggered.current = true;
+        window.dispatchEvent(new CustomEvent("open-cart"));
+      }
+    }
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleCartClose() {
+      setTimeout(() => {
+        hasTriggered.current = false;
+      }, 1000);
+    }
+    window.addEventListener("close-cart", handleCartClose);
+    return () => window.removeEventListener("close-cart", handleCartClose);
+  }, []);
+
+  // ── Data fetching ──────────────────────────────────────────
   useEffect(() => {
     loadHomePageData();
   }, []);
 
   const loadHomePageData = async (): Promise<void> => {
-    // Fire all 3 requests in parallel — don't let one failure block others
     await Promise.allSettled([
       fetchNewArrivals(),
       fetchTopSelling(),
@@ -137,19 +165,17 @@ export default function HomePage() {
   };
 
   return (
-    <>
-      <main>
-        {error && (
-          <div className="w-full bg-red-50 text-red-600 text-sm text-center py-2 px-4">
-            {error}
-          </div>
-        )}
-        <HeroSection />
-        <ProductCategories />
-        <NewArrivals products={newArrivals} loading={loadingArrivals} />
-        <TopSelling products={topSellingProducts} loading={loadingTopSelling} />
-        <CustomerReviews reviews={customerReviews} loading={loadingReviews} />
-      </main>
-    </>
+    <main>
+      {error && (
+        <div className="w-full bg-red-50 text-red-600 text-sm text-center py-2 px-4">
+          {error}
+        </div>
+      )}
+      <HeroSection />
+      <ProductCategories />
+      <NewArrivals products={newArrivals} loading={loadingArrivals} />
+      <TopSelling products={topSellingProducts} loading={loadingTopSelling} />
+      <CustomerReviews reviews={customerReviews} loading={loadingReviews} />
+    </main>
   );
 }

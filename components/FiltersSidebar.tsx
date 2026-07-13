@@ -1,15 +1,16 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { useState } from 'react';
-import type { FilterOptions, ActiveFilters } from '@/app/shop/page';
+import Image from "next/image";
+import { useState } from "react";
+import type { FilterOptions, ActiveFilters } from "@/app/(storefront)/shop/page";
 
 interface Props {
-  filterOptions:  FilterOptions | null;
-  activeFilters:  ActiveFilters;
-  loading:        boolean;
+  filterOptions: FilterOptions | null;
+  activeFilters: ActiveFilters;
+  loading: boolean;
   onFilterChange: (updated: Partial<ActiveFilters>) => void;
-  onReset:        () => void;
+  onReset: () => void;
+  onApply?: () => void;
 }
 
 export default function FiltersSidebar({
@@ -18,6 +19,7 @@ export default function FiltersSidebar({
   loading,
   onFilterChange,
   onReset,
+  onApply,
 }: Props) {
   const [priceRange, setPriceRange] = useState({
     min: activeFilters.min_price,
@@ -25,7 +27,12 @@ export default function FiltersSidebar({
   });
 
   const handleApply = () => {
-    onFilterChange({ min_price: priceRange.min, max_price: priceRange.max });
+    onFilterChange({
+      min_price: priceRange.min,
+      max_price: priceRange.max,
+    });
+
+    onApply?.();
   };
 
   if (loading) {
@@ -40,7 +47,6 @@ export default function FiltersSidebar({
 
   return (
     <aside className="w-full border border-[#f1f0f2] rounded-2xl p-5 space-y-4 bg-white">
-
       {/* Header */}
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-semibold">Filters</h2>
@@ -62,11 +68,12 @@ export default function FiltersSidebar({
         <h3 className="font-medium mb-2">Category</h3>
         {/* All option */}
         <button
-          onClick={() => onFilterChange({ category: '' })}
+          onClick={() => onFilterChange({ category: "" })}
           className={`w-full flex items-center justify-between text-sm transition
-            ${!activeFilters.category
-              ? 'text-black font-medium'
-              : 'text-text-muted hover:text-black'
+            ${
+              !activeFilters.category
+                ? "text-black font-medium"
+                : "text-text-muted hover:text-black"
             }`}
         >
           <span>All</span>
@@ -76,13 +83,16 @@ export default function FiltersSidebar({
         {filterOptions?.categories.map((cat) => (
           <button
             key={cat.id}
-            onClick={() => onFilterChange({
-              category: activeFilters.category === cat.slug ? '' : cat.slug,
-            })}
+            onClick={() =>
+              onFilterChange({
+                category: activeFilters.category === cat.slug ? "" : cat.slug,
+              })
+            }
             className={`w-full flex items-center justify-between text-sm transition
-              ${activeFilters.category === cat.slug
-                ? 'text-black font-medium'
-                : 'text-text-muted hover:text-black'
+              ${
+                activeFilters.category === cat.slug
+                  ? "text-black font-medium"
+                  : "text-text-muted hover:text-black"
               }`}
           >
             <span>{cat.name}</span>
@@ -97,11 +107,12 @@ export default function FiltersSidebar({
       <div className="space-y-1">
         <h3 className="font-medium mb-2">Occasion</h3>
         <button
-          onClick={() => onFilterChange({ occasion: '' })}
+          onClick={() => onFilterChange({ occasion: "" })}
           className={`w-full flex items-center justify-between text-sm transition
-            ${!activeFilters.occasion
-              ? 'text-black font-medium'
-              : 'text-text-muted hover:text-black'
+            ${
+              !activeFilters.occasion
+                ? "text-black font-medium"
+                : "text-text-muted hover:text-black"
             }`}
         >
           <span>All</span>
@@ -111,13 +122,16 @@ export default function FiltersSidebar({
         {filterOptions?.occasions.map((occ) => (
           <button
             key={occ.id}
-            onClick={() => onFilterChange({
-              occasion: activeFilters.occasion === occ.slug ? '' : occ.slug,
-            })}
+            onClick={() =>
+              onFilterChange({
+                occasion: activeFilters.occasion === occ.slug ? "" : occ.slug,
+              })
+            }
             className={`w-full flex items-center justify-between text-sm transition
-              ${activeFilters.occasion === occ.slug
-                ? 'text-black font-medium'
-                : 'text-text-muted hover:text-black'
+              ${
+                activeFilters.occasion === occ.slug
+                  ? "text-black font-medium"
+                  : "text-text-muted hover:text-black"
               }`}
           >
             <span>{occ.name}</span>
@@ -137,13 +151,16 @@ export default function FiltersSidebar({
             return (
               <button
                 key={mat}
-                onClick={() => onFilterChange({
-                  material: active ? '' : mat,
-                })}
+                onClick={() =>
+                  onFilterChange({
+                    material: active ? "" : mat,
+                  })
+                }
                 className={`px-3 py-2 rounded-full text-xs transition
-                  ${active
-                    ? 'bg-black text-white'
-                    : 'bg-gray-100 text-text-muted hover:bg-gray-200'
+                  ${
+                    active
+                      ? "bg-black text-white"
+                      : "bg-gray-100 text-text-muted hover:bg-gray-200"
                   }`}
               >
                 {mat}

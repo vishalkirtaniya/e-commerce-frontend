@@ -1,4 +1,5 @@
 "use client";
+
 import Image from "next/image";
 
 const ProductCategories = () => {
@@ -7,84 +8,79 @@ const ProductCategories = () => {
       id: 1,
       name: "Casual",
       image: "/images/casual.png",
-      className: "w-full sm:w-[36%]",
+      desktopWidth: "lg:w-[36%]",
     },
     {
       id: 2,
       name: "Formal",
       image: "/images/formal.png",
-      className: "w-full sm:w-[calc(64%-10px)]",
+      desktopWidth: "lg:w-[64%]",
     },
     {
       id: 3,
       name: "Party",
       image: "/images/party.png",
-      className: "w-full sm:w-[calc(64%-10px)]",
+      desktopWidth: "lg:w-[64%]",
     },
     {
       id: 4,
       name: "Gym",
       image: "/images/gym.png",
-      className: "w-full sm:w-[36%]",
+      desktopWidth: "lg:w-[36%]",
     },
   ];
 
   return (
-    <section className="w-full bg-secondary-background mt-[96px] px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-[1240px] mx-auto bg-[#f0f0f0] rounded-[20px]">
-        <div className="flex flex-col gap-[64px] justify-center items-center py-[62px]">
-          {/* Section Title */}
-          <h2 className="text-[36px] sm:text-[48px] font-bold leading-[41px] sm:leading-[55px] text-center text-text-primary font-aclonica">
-            Products We Make
-          </h2>
+    <section className="w-full px-4 sm:px-6 lg:px-8 mt-12 lg:mt-24">
+      <div className="max-w-[1240px] mx-auto bg-[#f0f0f0] rounded-[24px] px-4 sm:px-8 lg:px-16 py-10 lg:py-16">
+        {/* Title */}
+        <h2 className="font-integral text-[32px] leading-[36px] lg:text-[48px] lg:leading-[58px] font-bold text-center text-black">
+          BROWSE BY
+          <br className="lg:hidden" /> DRESS STYLE
+        </h2>
 
-          {/* Categories Grid */}
-          <div className="flex flex-col gap-[20px] justify-start items-center w-full max-w-[1110px]">
-            {/* First Row */}
-            <div className="flex flex-col sm:flex-row gap-[20px] justify-start items-center w-full">
-              {categories.slice(0, 2).map((category) => (
-                <div
-                  key={category.id}
-                  className={`relative ${category.className} bg-secondary-background rounded-[20px] overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300`}
-                >
-                  <Image
-                    src={category.image}
-                    alt={category.name}
-                    width={category.id === 1 ? 406 : 684}
-                    height={288}
-                    className="w-full h-[200px] sm:h-[288px] object-cover rounded-[20px]"
-                  />
-                  <div className="absolute top-[24px] left-[36px]">
-                    <h3 className="text-[28px] sm:text-[36px] font-bold leading-[38px] sm:leading-[49px] text-left text-text-primary font-satoshi">
-                      {category.name}
-                    </h3>
-                  </div>
-                </div>
-              ))}
-            </div>
+        {/* Grid */}
+        <div className="mt-10 lg:mt-16 flex flex-col gap-5">
+          {/* Row 1 */}
+          <div className="flex flex-col lg:flex-row gap-5">
+            {categories.slice(0, 2).map((category) => (
+              <div
+                key={category.id}
+                className={`relative w-full ${category.desktopWidth} h-[190px] lg:h-[289px] rounded-[20px] overflow-hidden bg-white cursor-pointer hover:shadow-lg transition-all`}
+              >
+                <Image
+                  src={category.image}
+                  alt={category.name}
+                  fill
+                  className="object-cover object-right"
+                />
 
-            {/* Second Row */}
-            <div className="flex flex-col sm:flex-row gap-[20px] justify-start items-center w-full">
-              {categories.slice(2, 4).map((category) => (
-                <div
-                  key={category.id}
-                  className={`relative ${category.className} bg-secondary-background rounded-[20px] overflow-hidden group cursor-pointer hover:shadow-lg transition-all duration-300`}
-                >
-                  <Image
-                    src={category.image}
-                    alt={category.name}
-                    width={category.id === 3 ? 642 : 354}
-                    height={288}
-                    className="w-full h-[200px] sm:h-[288px] object-cover rounded-[20px]"
-                  />
-                  <div className="absolute top-[24px] left-[36px]">
-                    <h3 className="text-[28px] sm:text-[36px] font-bold leading-[38px] sm:leading-[49px] text-left text-text-primary font-satoshi">
-                      {category.name}
-                    </h3>
-                  </div>
-                </div>
-              ))}
-            </div>
+                <h3 className="absolute top-6 left-6 z-10 text-[24px] lg:text-[36px] font-bold text-black">
+                  {category.name}
+                </h3>
+              </div>
+            ))}
+          </div>
+
+          {/* Row 2 */}
+          <div className="flex flex-col lg:flex-row gap-5">
+            {categories.slice(2, 4).map((category) => (
+              <div
+                key={category.id}
+                className={`relative w-full ${category.desktopWidth} h-[190px] lg:h-[289px] rounded-[20px] overflow-hidden bg-white cursor-pointer hover:shadow-lg transition-all`}
+              >
+                <Image
+                  src={category.image}
+                  alt={category.name}
+                  fill
+                  className="object-cover object-right"
+                />
+
+                <h3 className="absolute top-6 left-6 z-10 text-[24px] lg:text-[36px] font-bold text-black">
+                  {category.name}
+                </h3>
+              </div>
+            ))}
           </div>
         </div>
       </div>
